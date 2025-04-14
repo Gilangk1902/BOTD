@@ -7,10 +7,11 @@ using System.Linq;
 public class Generator : MonoBehaviour
 {
     public GameObject[] tilePrefabs;
-    public GameObject[] startPrefabs;
     public GameObject[] exitPrefabs;
     public GameObject[] blockedPrefabs;
     public GameObject[] doorPrefabs;
+    public GameObject[] roomPrefabs;
+    public GameObject[] hallwayPrefabs;
 
     [Header("Debugging Options")]
     public bool useBoxColliders;
@@ -20,9 +21,7 @@ public class Generator : MonoBehaviour
     public KeyCode toggleMapKey = KeyCode.M;
 
     [Header("Generation Limits")]
-    [Range(2, 100)] public int mainLength = 10;
     [Range(0, 50)] public int branchLength = 5;
-    [Range(0, 25)] public int numBranches = 10;
     [Range(0, 100)] public int doorPercent = 25;
     [Range(0, 1f)] public float constructionDelay;
     [Range(2, 100)] public int numberOfRooms = 5;
@@ -63,18 +62,25 @@ public class Generator : MonoBehaviour
 
         //}
 
-        int numberOfRoomsOnMain = numberOfRooms/2;
-        Debug.Log(numberOfRoomsOnMain);
-        int numberOfRoomsOnBranch = numberOfRooms - numberOfRoomsOnMain;
-        Debug.Log(numberOfRoomsOnBranch);
+        int numberOfRoomsOnMain = Mathf.CeilToInt((float) numberOfRooms/2);
 
-        while(generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRooms)
+        while(generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRoomsOnMain)
         {
             yield return new WaitForSeconds(constructionDelay);
             tileFrom = tileTo;
-            tileTo = CreateTile();
-            ConnectTiles();
-            CollisionCheck();
+
+            if (tileFrom.name.Contains("Room"))
+            {
+                tileTo = CreateHallwayTile();
+                ConnectTiles();
+                CollisionCheck();
+            }
+            else
+            {
+                tileTo = CreateTile();
+                ConnectTiles();
+                CollisionCheck();
+            }
         }
 
         foreach (Connector connector in container.GetComponentsInChildren<Connector>())
@@ -89,8 +95,9 @@ public class Generator : MonoBehaviour
         }
 
         int branchCount = 0;
-        while (generatedTiles.Count(x => x.tile.name.Contains("Room")) <= numberOfRooms + numberOfRooms/2)
+        while (generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRooms)
         {
+            bool roomGenerated = false;
             if (availableConnectors.Count > 0)
             {
                 goContainer = new GameObject("Branch " + (branchCount + 1));
@@ -100,63 +107,43 @@ public class Generator : MonoBehaviour
                 tileRoot = availableConnectors[availIndex].transform.parent.parent;
                 availableConnectors.RemoveAt(availIndex);
                 tileTo = tileRoot;
-                for (int i = 0; i < branchLength - 1; i++)
+
+                while (!roomGenerated)
                 {
                     yield return new WaitForSeconds(constructionDelay);
                     tileFrom = tileTo;
-                    tileTo = CreateTile();
-                    ConnectTiles();
-                    CollisionCheck();
+                    if (tileFrom.name.Contains("Room"))
+                    {
+                        tileTo = CreateHallwayTile();
+                        ConnectTiles();
+                        CollisionCheck();
+                    }
+                    else
+                    {
+                        tileTo = CreateTile();
+                        if (tileTo.name.Contains("Room"))
+                        {
+                            roomGenerated= true;
+                            Debug.Log("Room Generated");
+                        }
+                        ConnectTiles();
+                        CollisionCheck();
+                    }
                 }
+                //for (int i = 0; i < branchLength - 1; i++)
+                //{
+                //    yield return new WaitForSeconds(constructionDelay);
+                //    tileFrom = tileTo;
+                //    tileTo = CreateTile();
+                //    ConnectTiles();
+                //    CollisionCheck();
+                //}
             }
             else { break; }
         }
 
-        //for (int i = 0; i < mainLength - 1; i++)
-        //{
-        //    yield return new WaitForSeconds(constructionDelay);
-        //    tileFrom = tileTo;
-        //    tileTo = CreateTile();
-        //    ConnectTiles();
-        //    CollisionCheck();
-        //}
-
-        //foreach (Connector connector in container.GetComponentsInChildren<Connector>())
-        //{
-        //    if (!connector.isConnected)
-        //    {
-        //        if (!availableConnectors.Contains(connector))
-        //        {
-        //            availableConnectors.Add(connector);
-        //        }
-        //    }
-        //}
-
-        //for (int b = 0; b < numBranches; b++)
-        //{
-        //    if (availableConnectors.Count > 0)
-        //    {
-        //        goContainer = new GameObject("Branch " + (b + 1));
-        //        container = goContainer.transform;
-        //        container.SetParent(transform);
-        //        int availIndex = Random.Range(0, availableConnectors.Count);
-        //        tileRoot = availableConnectors[availIndex].transform.parent.parent;
-        //        availableConnectors.RemoveAt(availIndex);
-        //        tileTo = tileRoot;
-        //        for (int i = 0; i < branchLength - 1; i++)
-        //        {
-        //            yield return new WaitForSeconds(constructionDelay);
-        //            tileFrom = tileTo;
-        //            tileTo = CreateTile();
-        //            ConnectTiles();
-        //            CollisionCheck();
-        //        }
-        //    }
-        //    else { break; }
-        //}
-        Debug.Log(generatedTiles.Count(x => x.tile.name.Contains("Room")));
         CleanupBoxes();
-        //CleanupUnusedHallway();
+        CleanupUnusedHallway();    
     }
 
     void CollisionCheck()
@@ -238,9 +225,18 @@ public class Generator : MonoBehaviour
                 }
                 if (tileFrom != null)
                 {
-                    tileTo = CreateTile();
-                    ConnectTiles();
-                    CollisionCheck();
+                    if (tileFrom.name.Contains("Room"))
+                    {
+                        tileTo = CreateHallwayTile();
+                        ConnectTiles();
+                        CollisionCheck();
+                    }
+                    else
+                    {
+                        tileTo = CreateTile();
+                        ConnectTiles();
+                        CollisionCheck();
+                    }
                 }
             }
             else { attempts = 0; } // nothing other than tileTo and tileFrom was hit (so restore attempts back to zero)
@@ -260,41 +256,39 @@ public class Generator : MonoBehaviour
         }
     }
 
-    //void CleanupUnusedHallway()
-    //{
-    //    bool removedAny;
+    void CleanupUnusedHallway()
+    {
+        List<Transform> branchesToDelete = new List<Transform>();
 
-    //    do
-    //    {
-    //        removedAny = false;
+        foreach (Transform child in transform)
+        {
+            if (child.name.Contains("Branch"))
+            {
+                bool hasRoom = false;
 
-    //        var deadEndHalls = generatedTiles
-    //            .Where(tile => tile.tile.name.Contains("Hall"))
-    //            .Where(tile =>
-    //            {
-    //                Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
-    //                int connectedCount = connectors.Count(c => c.isConnected);
-    //                return connectedCount <= 1;
-    //            })
-    //            .ToList();
+                foreach (Transform subChild in child)
+                {
+                    if (subChild.name.Contains("Room"))
+                    {
+                        hasRoom = true;
+                        break;
+                    }
+                }
 
-    //        foreach (Tile tile in deadEndHalls)
-    //        {
-    //            Debug.Log("Removing dead-end hallway: " + tile.tile.name);
+                if (!hasRoom)
+                {
+                    branchesToDelete.Add(child);
+                }
+            }
+        }
 
-    //            // Disconnect all connectors just in case
-    //            foreach (Connector connector in tile.tile.GetComponentsInChildren<Connector>())
-    //            {
-    //                connector.isConnected = false;
-    //            }
+        foreach (Transform branch in branchesToDelete)
+        {
+            Debug.Log("Deleting unused branch: " + branch.name);
+            DestroyImmediate(branch.gameObject);
+        }
+    }
 
-    //            generatedTiles.Remove(tile);
-    //            DestroyImmediate(tile.tile.gameObject);
-    //            removedAny = true;
-    //        }
-
-    //    } while (removedAny); // repeat until no more dead-end hallways
-    //}
 
 
 
@@ -341,7 +335,6 @@ public class Generator : MonoBehaviour
 
                     box = tile.gameObject.AddComponent<BoxCollider>();
                     box.isTrigger = true;
-                    Debug.Log(box);
                 }
             }
             return connectorList[connectorIndex].transform;
@@ -359,10 +352,30 @@ public class Generator : MonoBehaviour
         return goTile.transform;
     }
 
+    Transform CreateHallwayTile()
+    {
+        int index = Random.Range(0, hallwayPrefabs.Length);
+        GameObject goTile = Instantiate(hallwayPrefabs[index], Vector3.zero, Quaternion.identity, container) as GameObject;
+        goTile.name = hallwayPrefabs[index].name;
+        Transform origin = generatedTiles[generatedTiles.FindIndex(x => x.tile == tileFrom)].tile;
+        generatedTiles.Add(new Tile(goTile.transform, origin));
+        return goTile.transform;
+    }
+
+    Transform CreateRoomTile()
+    {
+        int index = Random.Range(0, roomPrefabs.Length);
+        GameObject goTile = Instantiate(roomPrefabs[index], Vector3.zero, Quaternion.identity, container) as GameObject;
+        goTile.name = roomPrefabs[index].name;
+        Transform origin = generatedTiles[generatedTiles.FindIndex(x => x.tile == tileFrom)].tile;
+        generatedTiles.Add(new Tile(goTile.transform, origin));
+        return goTile.transform;
+    }
+
     Transform CreateStartTile()
     {
-        int index = Random.Range(0, startPrefabs.Length);
-        GameObject goTile = Instantiate(startPrefabs[index], Vector3.zero, Quaternion.identity, container) as GameObject;
+        int index = Random.Range(0, roomPrefabs.Length);
+        GameObject goTile = Instantiate(roomPrefabs[index], Vector3.zero, Quaternion.identity, container) as GameObject;
         goTile.name = "Start Room";
         float yRot = Random.Range(0, 4) * 90f;
         goTile.transform.Rotate(0, yRot, 0);

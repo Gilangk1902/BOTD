@@ -25,9 +25,11 @@ public class Generator : MonoBehaviour
     [Range(0, 25)] public int numBranches = 10;
     [Range(0, 100)] public int doorPercent = 25;
     [Range(0, 1f)] public float constructionDelay;
+    [Range(2, 100)] public int numberOfRooms = 5;
 
     [Header("Available at Runtime")]
     public List<Tile> generatedTiles = new List<Tile>();
+    public List<Tile> generatedRooms = new List<Tile>();
 
     List<Connector> availableConnectors = new List<Connector>();
     Color startLightColor = Color.white;
@@ -56,7 +58,17 @@ public class Generator : MonoBehaviour
         container.SetParent(transform);
         tileRoot = CreateStartTile();
         tileTo = tileRoot;
-        for (int i = 0; i < mainLength - 1; i++)
+
+        //while (generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRooms){
+
+        //}
+
+        int numberOfRoomsOnMain = numberOfRooms/2;
+        Debug.Log(numberOfRoomsOnMain);
+        int numberOfRoomsOnBranch = numberOfRooms - numberOfRoomsOnMain;
+        Debug.Log(numberOfRoomsOnBranch);
+
+        while(generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRooms)
         {
             yield return new WaitForSeconds(constructionDelay);
             tileFrom = tileTo;
@@ -65,7 +77,7 @@ public class Generator : MonoBehaviour
             CollisionCheck();
         }
 
-        foreach(Connector connector in container.GetComponentsInChildren<Connector>())
+        foreach (Connector connector in container.GetComponentsInChildren<Connector>())
         {
             if (!connector.isConnected)
             {
@@ -76,18 +88,20 @@ public class Generator : MonoBehaviour
             }
         }
 
-        for(int b = 0; b < numBranches; b++)
+        int branchCount = 0;
+        while (generatedTiles.Count(x => x.tile.name.Contains("Room")) <= numberOfRooms + numberOfRooms/2)
         {
-            if(availableConnectors.Count > 0)
+            if (availableConnectors.Count > 0)
             {
-                goContainer = new GameObject("Branch " + (b+1));
+                goContainer = new GameObject("Branch " + (branchCount + 1));
                 container = goContainer.transform;
                 container.SetParent(transform);
                 int availIndex = Random.Range(0, availableConnectors.Count);
                 tileRoot = availableConnectors[availIndex].transform.parent.parent;
                 availableConnectors.RemoveAt(availIndex);
                 tileTo = tileRoot;
-                for(int i = 0; i < branchLength - 1; i++) {
+                for (int i = 0; i < branchLength - 1; i++)
+                {
                     yield return new WaitForSeconds(constructionDelay);
                     tileFrom = tileTo;
                     tileTo = CreateTile();
@@ -97,7 +111,52 @@ public class Generator : MonoBehaviour
             }
             else { break; }
         }
+
+        //for (int i = 0; i < mainLength - 1; i++)
+        //{
+        //    yield return new WaitForSeconds(constructionDelay);
+        //    tileFrom = tileTo;
+        //    tileTo = CreateTile();
+        //    ConnectTiles();
+        //    CollisionCheck();
+        //}
+
+        //foreach (Connector connector in container.GetComponentsInChildren<Connector>())
+        //{
+        //    if (!connector.isConnected)
+        //    {
+        //        if (!availableConnectors.Contains(connector))
+        //        {
+        //            availableConnectors.Add(connector);
+        //        }
+        //    }
+        //}
+
+        //for (int b = 0; b < numBranches; b++)
+        //{
+        //    if (availableConnectors.Count > 0)
+        //    {
+        //        goContainer = new GameObject("Branch " + (b + 1));
+        //        container = goContainer.transform;
+        //        container.SetParent(transform);
+        //        int availIndex = Random.Range(0, availableConnectors.Count);
+        //        tileRoot = availableConnectors[availIndex].transform.parent.parent;
+        //        availableConnectors.RemoveAt(availIndex);
+        //        tileTo = tileRoot;
+        //        for (int i = 0; i < branchLength - 1; i++)
+        //        {
+        //            yield return new WaitForSeconds(constructionDelay);
+        //            tileFrom = tileTo;
+        //            tileTo = CreateTile();
+        //            ConnectTiles();
+        //            CollisionCheck();
+        //        }
+        //    }
+        //    else { break; }
+        //}
+        Debug.Log(generatedTiles.Count(x => x.tile.name.Contains("Room")));
         CleanupBoxes();
+        //CleanupUnusedHallway();
     }
 
     void CollisionCheck()
@@ -200,6 +259,44 @@ public class Generator : MonoBehaviour
             }
         }
     }
+
+    //void CleanupUnusedHallway()
+    //{
+    //    bool removedAny;
+
+    //    do
+    //    {
+    //        removedAny = false;
+
+    //        var deadEndHalls = generatedTiles
+    //            .Where(tile => tile.tile.name.Contains("Hall"))
+    //            .Where(tile =>
+    //            {
+    //                Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
+    //                int connectedCount = connectors.Count(c => c.isConnected);
+    //                return connectedCount <= 1;
+    //            })
+    //            .ToList();
+
+    //        foreach (Tile tile in deadEndHalls)
+    //        {
+    //            Debug.Log("Removing dead-end hallway: " + tile.tile.name);
+
+    //            // Disconnect all connectors just in case
+    //            foreach (Connector connector in tile.tile.GetComponentsInChildren<Connector>())
+    //            {
+    //                connector.isConnected = false;
+    //            }
+
+    //            generatedTiles.Remove(tile);
+    //            DestroyImmediate(tile.tile.gameObject);
+    //            removedAny = true;
+    //        }
+
+    //    } while (removedAny); // repeat until no more dead-end hallways
+    //}
+
+
 
     void ConnectTiles()
     {

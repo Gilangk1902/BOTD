@@ -248,23 +248,24 @@ MonoBehaviour:
   tilePrefabs:
   - {fileID: 8214381662590263330, guid: aee5c28095044284dab6e223843061ce, type: 3}
   - {fileID: 2450516365953104878, guid: 07b307a42aeeb514a89a6764d35f15e3, type: 3}
-  - {fileID: 4291215607138274614, guid: 9bb7a3e48032536428daced10f457311, type: 3}
-  - {fileID: 1807311021892744327, guid: b53a5c202fea8c940a10af5736858832, type: 3}
-  startPrefabs:
-  - {fileID: 4291215607138274614, guid: 9bb7a3e48032536428daced10f457311, type: 3}
   - {fileID: 1807311021892744327, guid: b53a5c202fea8c940a10af5736858832, type: 3}
   exitPrefabs: []
   blockedPrefabs: []
   doorPrefabs: []
+  roomPrefabs:
+  - {fileID: 1807311021892744327, guid: b53a5c202fea8c940a10af5736858832, type: 3}
+  hallwayPrefabs:
+  - {fileID: 8214381662590263330, guid: aee5c28095044284dab6e223843061ce, type: 3}
+  - {fileID: 2450516365953104878, guid: 07b307a42aeeb514a89a6764d35f15e3, type: 3}
   useBoxColliders: 0
   reloadKey: 8
   toggleMapKey: 109
-  mainLength: 12
   branchLength: 5
-  numBranches: 2
   doorPercent: 25
   constructionDelay: 1
+  numberOfRooms: 5
   generatedTiles: []
+  generatedRooms: []
 --- !u!4 &921402434
 Transform:
   m_ObjectHideFlags: 0

@@ -39,7 +39,7 @@ public class Generator : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(DungeonBuild());
+        //StartCoroutine(DungeonBuild());
     }
 
     void Update()
@@ -47,6 +47,32 @@ public class Generator : MonoBehaviour
         if(Input.GetKeyDown(reloadKey))
         {
             SceneManager.LoadScene("SampleScene");
+        }
+    }
+
+    public void GenerateDungeon()
+    {
+        if (transform.childCount > 0)
+        {
+            generatedTiles.Clear();
+            availableConnectors.Clear();
+            attempts = 0;
+            tileFrom = null;
+            tileTo = null;
+            tileRoot = null;
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+
+                
+            }
+
+            StartCoroutine(DungeonBuild());
+        }
+        else
+        {
+            Debug.Log("aw");
+            StartCoroutine(DungeonBuild());
         }
     }
 

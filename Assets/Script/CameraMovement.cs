@@ -14,7 +14,7 @@ public class CameraMovement : MonoBehaviour
 
     void HandleMouseDrag()
     {
-        if (Input.GetMouseButtonDown(2)) // Middle mouse
+        if (Input.GetMouseButtonDown(2)) 
         {
             dragOrigin = Input.mousePosition;
             return;

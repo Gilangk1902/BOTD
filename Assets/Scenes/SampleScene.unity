@@ -480,39 +480,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95f4ef8e6f8d94c4db368d335340a2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefabs:
-  - {fileID: 8214381662590263330, guid: aee5c28095044284dab6e223843061ce, type: 3}
-  - {fileID: 2450516365953104878, guid: 07b307a42aeeb514a89a6764d35f15e3, type: 3}
-  - {fileID: 4291215607138274614, guid: 9bb7a3e48032536428daced10f457311, type: 3}
-  - {fileID: 1807311021892744327, guid: b53a5c202fea8c940a10af5736858832, type: 3}
-  - {fileID: 8290010960635772037, guid: 4c3a54043e0ae354bb31adc58ead9de6, type: 3}
-  - {fileID: 4786324131664020354, guid: 7ffb9133eeabdbd47af6c6c8ad32cf18, type: 3}
-  - {fileID: 3967470568965623011, guid: 7995e4670a0d45f4ca3bf15817d756c2, type: 3}
-  - {fileID: 8236153769999590112, guid: 14f465c50bf01894886b30b50cf9478c, type: 3}
   exitPrefabs: []
   blockedPrefabs:
-  - {fileID: 4662940790568207544, guid: 5e3510639b98a1b4194b39304748136e, type: 3}
+  - {fileID: 8888802718847992103, guid: 6712e4d282228b746b5ff9ed06fb2ef9, type: 3}
   doorPrefabs:
   - {fileID: 4662940790568207544, guid: 5e3510639b98a1b4194b39304748136e, type: 3}
-  roomPrefabs:
-  - {fileID: 4291215607138274614, guid: 9bb7a3e48032536428daced10f457311, type: 3}
-  - {fileID: 1807311021892744327, guid: b53a5c202fea8c940a10af5736858832, type: 3}
-  - {fileID: 8290010960635772037, guid: 4c3a54043e0ae354bb31adc58ead9de6, type: 3}
-  - {fileID: 3967470568965623011, guid: 7995e4670a0d45f4ca3bf15817d756c2, type: 3}
-  - {fileID: 8236153769999590112, guid: 14f465c50bf01894886b30b50cf9478c, type: 3}
   hallwayPrefabs:
   - {fileID: 8214381662590263330, guid: aee5c28095044284dab6e223843061ce, type: 3}
   - {fileID: 2450516365953104878, guid: 07b307a42aeeb514a89a6764d35f15e3, type: 3}
   - {fileID: 4786324131664020354, guid: 7ffb9133eeabdbd47af6c6c8ad32cf18, type: 3}
+  _roomPrefabs:
+  - {fileID: 11400000, guid: 7449c800bc0ed5b45b56ad62f8effd19, type: 2}
+  - {fileID: 11400000, guid: 82c2d8ddb4bbfc54fba5eaf831a3065c, type: 2}
+  - {fileID: 11400000, guid: 917261dfcb948174d99663efb3863d0b, type: 2}
+  - {fileID: 11400000, guid: dd33b69a951712d47874507e783353cb, type: 2}
+  - {fileID: 11400000, guid: b5343ae73c82596489e052eaeab9a714, type: 2}
   useBoxColliders: 1
   reloadKey: 8
   toggleMapKey: 109
-  branchLength: 5
-  doorPercent: 25
   constructionDelay: 0.37
-  numberOfRooms: 5
+  numberOfRooms: 10
   generatedTiles: []
-  generatedRooms: []
 --- !u!4 &921402434
 Transform:
   m_ObjectHideFlags: 0

@@ -7,12 +7,12 @@ using UnityEditor.MemoryProfiler;
 
 public class Generator : MonoBehaviour
 {
-    public GameObject[] tilePrefabs;
     public GameObject[] exitPrefabs;
     public GameObject[] blockedPrefabs;
     public GameObject[] doorPrefabs;
-    public GameObject[] roomPrefabs;
     public GameObject[] hallwayPrefabs;
+    public RoomScriptable[] _roomPrefabs;
+    public GameObject chestPrefab;
 
     [Header("Debugging Options")]
     public bool useBoxColliders;
@@ -22,21 +22,26 @@ public class Generator : MonoBehaviour
     public KeyCode toggleMapKey = KeyCode.M;
 
     [Header("Generation Limits")]
-    [Range(0, 50)] public int branchLength = 5;
-    [Range(0, 100)] public int doorPercent = 25;
     [Range(0, 1f)] public float constructionDelay;
     [Range(2, 100)] public int numberOfRooms = 10;
 
     [Header("Available at Runtime")]
     public List<Tile> generatedTiles = new List<Tile>();
-    public List<Tile> generatedRooms = new List<Tile>();
 
     List<Connector> availableConnectors = new List<Connector>();
-    Color startLightColor = Color.white;
     Transform tileFrom, tileTo, tileRoot;
     Transform container;
 
     int attempts;
+
+    public enum DungeonGeneratorState
+    {
+        Inactive,
+        Generating,
+        Finished
+    }
+
+    [SerializeField] public DungeonGeneratorState dungeonGeneratorState = DungeonGeneratorState.Inactive;
 
     private void Start()
     {
@@ -76,6 +81,7 @@ public class Generator : MonoBehaviour
 
     IEnumerator DungeonBuild()
     {
+        dungeonGeneratorState = DungeonGeneratorState.Generating;
         GameObject goContainer = new GameObject("Main Path");
         container = goContainer.transform;
         container.SetParent(transform);
@@ -146,7 +152,7 @@ public class Generator : MonoBehaviour
                         tileTo = CreateRoomTile();
                         if (tileTo.name.Contains("Room"))
                         {
-                            roomGenerated= true;
+                            roomGenerated = true;
                         }
                         ConnectTiles();
                         CollisionCheck();
@@ -160,7 +166,8 @@ public class Generator : MonoBehaviour
         CleanupUnusedHallway();
         BlockUnusedConnector();
 
-        //Debug.Log("rooms: " + generatedRooms.Count);
+        dungeonGeneratorState = DungeonGeneratorState.Finished;
+        SpawnChest();
     }
 
     void CollisionCheck()
@@ -251,13 +258,21 @@ public class Generator : MonoBehaviour
                     }
                     else
                     {
-                        tileTo = CreateTile();
+                        int index = Random.Range(0, 1);
+                        if(index == 0)
+                        {
+                            tileTo = CreateHallwayTile();
+                        }
+                        else
+                        {
+                            tileTo = CreateRoomTile();
+                        }
                         ConnectTiles();
                         CollisionCheck();
                     }
                 }
             }
-            else { attempts = 0; } // nothing other than tileTo and tileFrom was hit (so restore attempts back to zero)
+            else { attempts = 0; }
         }
     }
 
@@ -273,42 +288,6 @@ public class Generator : MonoBehaviour
             }
         }
     }
-
-    void CleanupUnusedHallway()
-    {
-        //List<Transform> branchesToDelete = new List<Transform>();
-
-        //foreach (Transform child in transform)
-        //{
-        //    if (child.name.Contains("Branch"))
-        //    {
-        //        bool hasRoom = false;
-
-        //        foreach (Transform subChild in child)
-        //        {
-        //            if (subChild.name.Contains("Room"))
-        //            {
-        //                hasRoom = true;
-        //                break;
-        //            }
-        //        }
-
-        //        if (!hasRoom)
-        //        {
-        //            branchesToDelete.Add(child);
-        //        }
-        //    }
-        //}
-
-        //foreach (Transform branch in branchesToDelete)
-        //{
-        //    Debug.Log("Deleting unused branch: " + branch.name);
-        //    DestroyImmediate(branch.gameObject);
-        //}
-    }
-
-
-
 
     void ConnectTiles()
     {
@@ -360,16 +339,6 @@ public class Generator : MonoBehaviour
         return null;
     }
 
-    Transform CreateTile()
-    {
-        int index = Random.Range(0, tilePrefabs.Length);
-        GameObject goTile = Instantiate(tilePrefabs[index], Vector3.zero, Quaternion.identity, container) as GameObject;
-        goTile.name = tilePrefabs[index].name;
-        Transform origin = generatedTiles[generatedTiles.FindIndex(x => x.tile == tileFrom)].tile;
-        generatedTiles.Add(new Tile(goTile.transform, origin));
-        return goTile.transform;
-    }
-
     Transform CreateHallwayTile()
     {
         int index = Random.Range(0, hallwayPrefabs.Length);
@@ -382,22 +351,29 @@ public class Generator : MonoBehaviour
 
     Transform CreateRoomTile()
     {
-        int index = Random.Range(0, roomPrefabs.Length);
-        GameObject goTile = Instantiate(roomPrefabs[index], Vector3.zero, Quaternion.identity, container) as GameObject;
-        goTile.name = roomPrefabs[index].name;
+        //int index = Random.Range(0, roomPrefabs.Length);
+        int index = GetWeightedRandomRoom();
+
+        Debug.Log("create room tile");
+
+        GameObject goTile = Instantiate(_roomPrefabs[index].prefab, Vector3.zero, Quaternion.identity, container) as GameObject;
+        goTile.name = _roomPrefabs[index].name;
         Transform origin = generatedTiles[generatedTiles.FindIndex(x => x.tile == tileFrom)].tile;
         generatedTiles.Add(new Tile(goTile.transform, origin));
+
         return goTile.transform;
     }
 
     Transform CreateStartTile()
     {
-        int index = Random.Range(0, roomPrefabs.Length);
-        GameObject goTile = Instantiate(roomPrefabs[index], Vector3.zero, Quaternion.identity, container) as GameObject;
-        goTile.name = "Start Room";
+        int index = GetWeightedRandomRoom();
+
+        GameObject goTile = Instantiate(_roomPrefabs[index].prefab, Vector3.zero, Quaternion.identity, container);
+        goTile.name = _roomPrefabs[index].prefab.name + "_Start";
         float yRot = Random.Range(0, 4) * 90f;
         goTile.transform.Rotate(0, yRot, 0);
         generatedTiles.Add(new Tile(goTile.transform, null));
+
         return goTile.transform;
     }
 
@@ -424,5 +400,84 @@ public class Generator : MonoBehaviour
             door.transform.localPosition = Vector3.zero;
             door.transform.localRotation = Quaternion.identity;
         }
+    }
+
+    int GetWeightedRandomRoom()
+    {
+        float totalWeight = 0f;
+        foreach (var wp in _roomPrefabs)
+            totalWeight += wp.weight;
+
+        float randomValue = Random.Range(0f, totalWeight);
+        float currentSum = 0f;
+
+        for (int i = 0; i < _roomPrefabs.Count(); i++)
+        {
+            currentSum += _roomPrefabs[i].weight;
+            if (randomValue <= currentSum)
+                return i;
+        }
+
+        return 0; // fallback
+    }
+
+    void SpawnChest()
+    {
+        foreach (Tile tile in generatedTiles)
+        {
+            if (tile.tile == null) continue;
+
+            // Only spawn chest on Room tiles
+            if (!tile.tile.name.Contains("Room")) continue;
+
+            // Find all spawn points (by name, tag, or component)
+            Transform[] spawnPoints = tile.tile.GetComponentsInChildren<Transform>()
+                .Where(t => t.name.Equals("ChestSpawnPoint")).ToArray();
+
+            if (spawnPoints.Length == 0)
+            {
+                Debug.LogWarning("No chest spawn points in: " + tile.tile.name);
+                continue;
+            }
+
+            // Randomly select one spawn point
+            Transform chosen = spawnPoints[Random.Range(0, spawnPoints.Length)];
+
+            // Spawn chest
+            Instantiate(chestPrefab, chosen.position, chosen.rotation, tile.tile);
+        }
+    }
+
+    void CleanupUnusedHallway()
+    {
+        //List<Transform> branchesToDelete = new List<Transform>();
+
+        //foreach (Transform child in transform)
+        //{
+        //    if (child.name.Contains("Branch"))
+        //    {
+        //        bool hasRoom = false;
+
+        //        foreach (Transform subChild in child)
+        //        {
+        //            if (subChild.name.Contains("Room"))
+        //            {
+        //                hasRoom = true;
+        //                break;
+        //            }
+        //        }
+
+        //        if (!hasRoom)
+        //        {
+        //            branchesToDelete.Add(child);
+        //        }
+        //    }
+        //}
+
+        //foreach (Transform branch in branchesToDelete)
+        //{
+        //    Debug.Log("Deleting unused branch: " + branch.name);
+        //    DestroyImmediate(branch.gameObject);
+        //}
     }
 }

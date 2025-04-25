@@ -13,6 +13,7 @@ public class Generator : MonoBehaviour
     public GameObject[] hallwayPrefabs;
     public RoomScriptable[] _roomPrefabs;
     public GameObject chestPrefab;
+    public GameObject characterPrefab;
 
     [Header("Debugging Options")]
     public bool useBoxColliders;
@@ -45,39 +46,39 @@ public class Generator : MonoBehaviour
 
     private void Start()
     {
-        //StartCoroutine(DungeonBuild());
+        StartCoroutine(DungeonBuild());
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(reloadKey))
-        {
-            SceneManager.LoadScene("SampleScene");
-        }
+        //if(Input.GetKeyDown(reloadKey))
+        //{
+        //    SceneManager.LoadScene("SampleScene");
+        //}
     }
 
-    public void GenerateDungeon()
-    {
-        if (transform.childCount > 0)
-        {
-            generatedTiles.Clear();
-            availableConnectors.Clear();
-            attempts = 0;
-            tileFrom = null;
-            tileTo = null;
-            tileRoot = null;
-            foreach (Transform child in transform)
-            {
-                Destroy(child.gameObject);
-            }
+    //public void GenerateDungeon()
+    //{
+    //    if (transform.childCount > 0)
+    //    {
+    //        generatedTiles.Clear();
+    //        availableConnectors.Clear();
+    //        attempts = 0;
+    //        tileFrom = null;
+    //        tileTo = null;
+    //        tileRoot = null;
+    //        foreach (Transform child in transform)
+    //        {
+    //            Destroy(child.gameObject);
+    //        }
 
-            StartCoroutine(DungeonBuild());
-        }
-        else
-        {
-            StartCoroutine(DungeonBuild());
-        }
-    }
+    //        StartCoroutine(DungeonBuild());
+    //    }
+    //    else
+    //    {
+    //        StartCoroutine(DungeonBuild());
+    //    }
+    //}
 
     IEnumerator DungeonBuild()
     {
@@ -167,7 +168,12 @@ public class Generator : MonoBehaviour
         BlockUnusedConnector();
 
         dungeonGeneratorState = DungeonGeneratorState.Finished;
-        SpawnChest();
+
+        if(dungeonGeneratorState == DungeonGeneratorState.Finished)
+        {
+            SpawnChest();
+            SpawnPlayer();
+        }
     }
 
     void CollisionCheck()
@@ -480,4 +486,17 @@ public class Generator : MonoBehaviour
         //    DestroyImmediate(branch.gameObject);
         //}
     }
+
+    void SpawnPlayer()
+    {
+        if (characterPrefab == null)
+        {
+            Debug.LogWarning("characterPrefab belum diset!");
+            return;
+        }
+
+        // Spawn karakter
+        Instantiate(characterPrefab, Vector3.zero, Quaternion.identity);
+    }
+
 }

@@ -226,6 +226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 921402434}
   - component: {fileID: 921402433}
+  - component: {fileID: 921402435}
   m_Layer: 0
   m_Name: Generator
   m_TagString: Untagged
@@ -254,6 +255,7 @@ MonoBehaviour:
   - {fileID: 8214381662590263330, guid: aee5c28095044284dab6e223843061ce, type: 3}
   - {fileID: 2450516365953104878, guid: 07b307a42aeeb514a89a6764d35f15e3, type: 3}
   - {fileID: 4786324131664020354, guid: 7ffb9133eeabdbd47af6c6c8ad32cf18, type: 3}
+  - {fileID: 4567365056217181163, guid: dd011dd663c7cb9428123fb2f4b44078, type: 3}
   _roomPrefabs:
   - {fileID: 11400000, guid: 7449c800bc0ed5b45b56ad62f8effd19, type: 2}
   - {fileID: 11400000, guid: 82c2d8ddb4bbfc54fba5eaf831a3065c, type: 2}
@@ -262,12 +264,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b5343ae73c82596489e052eaeab9a714, type: 2}
   chestPrefab: {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
   characterPrefab: {fileID: 2826078552957777887, guid: 16fa8b34c2dc08e4892d692b8b4a4006, type: 3}
-  useBoxColliders: 0
+  useBoxColliders: 1
   reloadKey: 8
   toggleMapKey: 109
   constructionDelay: 0
   numberOfRooms: 10
   generatedTiles: []
+  navMeshSurface: {fileID: 921402435}
   dungeonGeneratorState: 0
 --- !u!4 &921402434
 Transform:
@@ -284,6 +287,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &921402435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921402432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77ccfeb60825c4e4dad35b748e80cb16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_BuildHeightMesh: 0
+  m_NavMeshData: {fileID: 0}
 --- !u!1 &1765056240
 GameObject:
   m_ObjectHideFlags: 0

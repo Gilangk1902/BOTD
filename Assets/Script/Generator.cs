@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using UnityEditor.MemoryProfiler;
+using UnityEngine.AI;
 
 public class Generator : MonoBehaviour
 {
@@ -34,6 +35,8 @@ public class Generator : MonoBehaviour
     Transform container;
 
     int attempts;
+
+    public NavMeshSurface navMeshSurface;
 
     public enum DungeonGeneratorState
     {
@@ -171,6 +174,7 @@ public class Generator : MonoBehaviour
 
         if(dungeonGeneratorState == DungeonGeneratorState.Finished)
         {
+            navMeshSurface.BuildNavMesh();
             SpawnChest();
             SpawnPlayer();
         }

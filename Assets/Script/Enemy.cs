@@ -29,13 +29,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         agent.speed = chaseSpeed;
     }
 
-    protected virtual void OnEnable()
-    {
-        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            agent.Warp(hit.position);
-        }
-    }
+    //protected virtual void OnEnable()
+    //{
+    //    if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+    //    {
+    //        agent.Warp(hit.position);
+    //    }
+    //}
 
     protected virtual void Update()
     {

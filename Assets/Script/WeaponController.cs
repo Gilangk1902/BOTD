@@ -16,6 +16,7 @@ public class WeaponController : MonoBehaviour
     private bool isReloading = false;
     public float meleeCooldown = 1f;
     private float lastMeleeTime = -999f;
+    public LayerMask shootableLayers = Physics.DefaultRaycastLayers; // assign in Inspector
 
     private void Start()
     {
@@ -113,8 +114,20 @@ public class WeaponController : MonoBehaviour
 
         Debug.Log($"Firing {data.weaponName}, Ammo left: {current.currentAmmo}");
 
-        // TODO: Tambah efek peluru, raycast, dll di sini
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, shootableLayers))
+        {
+            Debug.Log("Hit: " + hit.collider.name);
+
+            IDamageable target = hit.collider.GetComponent<IDamageable>();
+            if (target != null)
+            {
+                target.TakeDamage(data.damage);
+            }
+        }
+
     }
+
 
     void TryReload()
     {
@@ -218,6 +231,10 @@ public class WeaponController : MonoBehaviour
         {
             col.enabled = isActive;
         }
+    }
+    public WeaponRuntime GetCurrentRuntime()
+    {
+        return weaponStates[currentSlot];
     }
 
 }

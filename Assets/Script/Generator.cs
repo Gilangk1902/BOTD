@@ -169,6 +169,7 @@ public class Generator : MonoBehaviour
         CleanupBoxes();
         CleanupUnusedHallway();
         BlockUnusedConnector();
+        PlaceDoorsOnConnectedRoomConnectors();
 
         dungeonGeneratorState = DungeonGeneratorState.Finished;
 
@@ -502,5 +503,30 @@ public class Generator : MonoBehaviour
         // Spawn karakter
         Instantiate(characterPrefab, Vector3.zero, Quaternion.identity);
     }
+
+    void PlaceDoorsOnConnectedRoomConnectors()
+    {
+        foreach (Tile tile in generatedTiles)
+        {
+            if (tile.tile == null) continue;
+
+            if (!tile.tile.name.Contains("Room")) continue;
+
+            Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
+
+            foreach (Connector connector in connectors)
+            {
+                if (connector.isConnected)
+                {
+                    GameObject door = Instantiate(doorPrefabs[0], Vector3.zero, Quaternion.identity);
+                    door.name = doorPrefabs[0].name;
+                    door.transform.SetParent(connector.transform);
+                    door.transform.localPosition = Vector3.zero;
+                    door.transform.localRotation = Quaternion.identity;
+                }
+            }
+        }
+    }
+
 
 }

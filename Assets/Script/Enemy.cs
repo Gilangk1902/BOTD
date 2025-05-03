@@ -3,59 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour, IDamageable
+public abstract class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     public int maxHealth = 100;
-    private int currentHealth;
+    protected int currentHealth;
 
     [Header("Chase")]
     public float chaseRange = 10f;
     public float stopDistance = 1.5f;
     public float chaseSpeed = 3.5f;
 
-    private NavMeshAgent agent;
-    private Transform player;
+    protected NavMeshAgent agent;
+    protected Transform player;
 
-    [Header("Attack")]
-    public int attackDamage = 10;
-    public float attackCooldown = 1f;
-
-    private float lastAttackTime = -999f;
-
-    [Header("Ranged Attack")]
-    public GameObject projectilePrefab;
-    public Transform shootPoint;
-    public float rangedCooldown = 2f;
-    public float rangedRange = 15f;
-
-    private float lastRangedTime = -999f;
-
-    private void Start()
+    protected virtual void Start()
     {
         currentHealth = maxHealth;
-
         agent = GetComponent<NavMeshAgent>();
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
-        {
             player = playerObj.transform;
-        }
 
         agent.speed = chaseSpeed;
     }
 
-    void OnEnable()
+    protected virtual void OnEnable()
     {
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
-            GetComponent<NavMeshAgent>().Warp(hit.position);
+            agent.Warp(hit.position);
         }
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (player == null) return;
 
@@ -66,17 +48,12 @@ public class Enemy : MonoBehaviour, IDamageable
             if (distance > stopDistance)
             {
                 agent.SetDestination(player.position);
-
-                // Jika dalam jarak ranged attack, tapi terlalu jauh untuk melee
-                if (distance <= rangedRange)
-                {
-                    DoRangedAttack();
-                }
+                OnChasing(distance);
             }
             else
             {
                 agent.ResetPath();
-                AttackPlayer(); // melee attack
+                Attack(); // default attack
             }
         }
         else
@@ -85,57 +62,14 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    void AttackPlayer()
-    {
-        if (Time.time - lastAttackTime < attackCooldown) return;
-        if (shootPoint == null) return;
+    protected virtual void OnChasing(float distance) { }
 
-        lastAttackTime = Time.time;
+    public abstract void Attack();
 
-        Debug.Log($"{gameObject.name} performs melee attack!");
-
-        // Gunakan posisi dan arah dari shootPoint
-        Vector3 attackOrigin = shootPoint.position;
-        Vector3 attackDirection = shootPoint.forward;
-
-        // Hit area di depan shootPoint
-        Collider[] hitColliders = Physics.OverlapSphere(attackOrigin + attackDirection * 1f, 1.5f);
-
-        foreach (Collider hit in hitColliders)
-        {
-            IDamageable target = hit.GetComponent<IDamageable>();
-            if (target != null && hit.CompareTag("Player"))
-            {
-                target.TakeDamage(attackDamage);
-                Debug.Log($"{gameObject.name} dealt {attackDamage} melee damage to Player!");
-            }
-        }
-    }
-
-
-    void DoRangedAttack()
-    {
-        if (Time.time - lastRangedTime < rangedCooldown) return;
-        if (projectilePrefab == null || shootPoint == null) return;
-
-        lastRangedTime = Time.time;
-
-        Vector3 direction = (player.position - shootPoint.position).normalized;
-        Quaternion rotation = Quaternion.LookRotation(direction);
-
-        GameObject projectile = Instantiate(projectilePrefab, shootPoint.position, rotation);
-        Projectile p = projectile.GetComponent<Projectile>();
-        if (p != null)
-        {
-            p.damage = attackDamage;
-        }
-
-        Debug.Log($"{gameObject.name} fired a projectile!");
-    }
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         currentHealth -= amount;
-        Debug.Log($"{gameObject.name} took {amount} damage. Remaining health: {currentHealth}");
+        Debug.Log($"{gameObject.name} took {amount} damage. Remaining: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -143,7 +77,7 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    void Die()
+    protected virtual void Die()
     {
         Debug.Log($"{gameObject.name} has died.");
         Destroy(gameObject);

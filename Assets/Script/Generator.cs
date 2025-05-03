@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using UnityEditor.MemoryProfiler;
+using UnityEngine.AI;
 
 public class Generator : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Generator : MonoBehaviour
     public GameObject[] hallwayPrefabs;
     public RoomScriptable[] _roomPrefabs;
     public GameObject chestPrefab;
+    public GameObject characterPrefab;
 
     [Header("Debugging Options")]
     public bool useBoxColliders;
@@ -34,6 +36,8 @@ public class Generator : MonoBehaviour
 
     int attempts;
 
+    public NavMeshSurface navMeshSurface;
+
     public enum DungeonGeneratorState
     {
         Inactive,
@@ -45,39 +49,39 @@ public class Generator : MonoBehaviour
 
     private void Start()
     {
-        //StartCoroutine(DungeonBuild());
+        StartCoroutine(DungeonBuild());
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(reloadKey))
-        {
-            SceneManager.LoadScene("SampleScene");
-        }
+        //if(Input.GetKeyDown(reloadKey))
+        //{
+        //    SceneManager.LoadScene("SampleScene");
+        //}
     }
 
-    public void GenerateDungeon()
-    {
-        if (transform.childCount > 0)
-        {
-            generatedTiles.Clear();
-            availableConnectors.Clear();
-            attempts = 0;
-            tileFrom = null;
-            tileTo = null;
-            tileRoot = null;
-            foreach (Transform child in transform)
-            {
-                Destroy(child.gameObject);
-            }
+    //public void GenerateDungeon()
+    //{
+    //    if (transform.childCount > 0)
+    //    {
+    //        generatedTiles.Clear();
+    //        availableConnectors.Clear();
+    //        attempts = 0;
+    //        tileFrom = null;
+    //        tileTo = null;
+    //        tileRoot = null;
+    //        foreach (Transform child in transform)
+    //        {
+    //            Destroy(child.gameObject);
+    //        }
 
-            StartCoroutine(DungeonBuild());
-        }
-        else
-        {
-            StartCoroutine(DungeonBuild());
-        }
-    }
+    //        StartCoroutine(DungeonBuild());
+    //    }
+    //    else
+    //    {
+    //        StartCoroutine(DungeonBuild());
+    //    }
+    //}
 
     IEnumerator DungeonBuild()
     {
@@ -165,9 +169,16 @@ public class Generator : MonoBehaviour
         CleanupBoxes();
         CleanupUnusedHallway();
         BlockUnusedConnector();
+        PlaceDoorsOnConnectedRoomConnectors();
 
         dungeonGeneratorState = DungeonGeneratorState.Finished;
-        SpawnChest();
+
+        if(dungeonGeneratorState == DungeonGeneratorState.Finished)
+        {
+            navMeshSurface.BuildNavMesh();
+            SpawnChest();
+            SpawnPlayer();
+        }
     }
 
     void CollisionCheck()
@@ -480,4 +491,42 @@ public class Generator : MonoBehaviour
         //    DestroyImmediate(branch.gameObject);
         //}
     }
+
+    void SpawnPlayer()
+    {
+        if (characterPrefab == null)
+        {
+            Debug.LogWarning("characterPrefab belum diset!");
+            return;
+        }
+
+        // Spawn karakter
+        Instantiate(characterPrefab, Vector3.zero, Quaternion.identity);
+    }
+
+    void PlaceDoorsOnConnectedRoomConnectors()
+    {
+        foreach (Tile tile in generatedTiles)
+        {
+            if (tile.tile == null) continue;
+
+            if (!tile.tile.name.Contains("Room")) continue;
+
+            Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
+
+            foreach (Connector connector in connectors)
+            {
+                if (connector.isConnected)
+                {
+                    GameObject door = Instantiate(doorPrefabs[0], Vector3.zero, Quaternion.identity);
+                    door.name = doorPrefabs[0].name;
+                    door.transform.SetParent(connector.transform);
+                    door.transform.localPosition = Vector3.zero;
+                    door.transform.localRotation = Quaternion.identity;
+                }
+            }
+        }
+    }
+
+
 }

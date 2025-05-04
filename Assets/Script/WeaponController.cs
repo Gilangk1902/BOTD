@@ -110,23 +110,36 @@ public class WeaponController : MonoBehaviour
         }
 
         current.lastFireTime = Time.time;
-        current.currentAmmo--;
+        current.currentAmmo--; // Kurangi hanya sekali meskipun multi-raycast
 
-        Debug.Log($"Firing {data.weaponName}, Ammo left: {current.currentAmmo}");
+        Debug.Log($"Firing {data.bulletPerShot} pellets. Ammo left: {current.currentAmmo}");
 
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, shootableLayers))
+        for (int i = 0; i < data.bulletPerShot; i++)
         {
-            Debug.Log("Hit: " + hit.collider.name);
+            Vector3 baseDirection = playerCamera.transform.forward;
+            Vector3 spreadOffset = new Vector3(
+                Random.Range(-data.spreadAmount, data.spreadAmount),
+                Random.Range(-data.spreadAmount, data.spreadAmount),
+                0f
+            );
+            Vector3 finalDirection = (baseDirection + playerCamera.transform.TransformDirection(spreadOffset)).normalized;
 
-            IDamageable target = hit.collider.GetComponent<IDamageable>();
-            if (target != null)
+            Ray ray = new Ray(playerCamera.transform.position, finalDirection);
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000f, shootableLayers))
             {
-                target.TakeDamage(data.damage);
+                Debug.DrawRay(ray.origin, finalDirection * hit.distance, Color.red, 1f);
+                Debug.Log("Hit: " + hit.collider.name);
+
+                IDamageable target = hit.collider.GetComponent<IDamageable>();
+                if (target != null)
+                {
+                    target.TakeDamage(data.damage);
+                }
             }
         }
-
     }
+
+
 
 
     void TryReload()

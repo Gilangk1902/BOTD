@@ -15,6 +15,10 @@ public class WeaponData : ScriptableObject
     public float fireRate = 0.1f;
     public int maxAmmo = 30;
     public float reloadTime = 1.5f;
+
+    public int bulletPerShot = 1;
+    public float spreadAmount = 0.02f; // Default spread, bisa diatur di Inspector
+
 }
 
 

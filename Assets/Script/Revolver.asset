@@ -18,4 +18,6 @@ MonoBehaviour:
   damage: 25
   fireRate: 1
   maxAmmo: 6
-  reloadTime: 2
+  reloadTime: 1
+  bulletPerShot: 1
+  spreadAmount: 0.02

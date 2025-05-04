@@ -15,7 +15,8 @@ public class CharacterController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked
+
     }
 
     void Update()
@@ -40,12 +41,25 @@ public class CharacterController : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
+    Vector3 currentVelocity;
+    Vector3 targetVelocity;
+
+    public float acceleration = 10f;
+    public float deceleration = 10f;
+
     void Move()
     {
-        float moveX = Input.GetAxis("Horizontal");
-        float moveZ = Input.GetAxis("Vertical");
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveZ = Input.GetAxisRaw("Vertical");
 
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
-        rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
+        Vector3 inputDir = new Vector3(moveX, 0f, moveZ).normalized;
+        targetVelocity = transform.TransformDirection(inputDir) * moveSpeed;
+
+        // SmoothDamp untuk transisi kecepatan yang halus
+        Vector3 velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref currentVelocity, inputDir.magnitude > 0 ? 1f / acceleration : 1f / deceleration);
+
+        rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z); // jaga Y velocity (untuk gravity/jump)
     }
+
+
 }

@@ -11,16 +11,18 @@ public class EnemySpawner : MonoBehaviour
     public bool hasSpawned = false;
 
 
-    public void SpawnEnemy()
+    public Enemy SpawnEnemy()
     {
         if (enemyPrefabs.Length == 0)
         {
             Debug.LogWarning("EnemySpawner: No enemy prefabs assigned.");
-            return;
+            return null;
         }
 
         int index = Random.Range(0, enemyPrefabs.Length);
-        Instantiate(enemyPrefabs[index], transform.position, Quaternion.identity);
+        GameObject enemyGO = Instantiate(enemyPrefabs[index], transform.position, Quaternion.identity);
+        return enemyGO.GetComponent<Enemy>();
     }
+
 }
 

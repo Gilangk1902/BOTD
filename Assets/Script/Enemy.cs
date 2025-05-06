@@ -29,13 +29,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         agent.speed = chaseSpeed;
     }
 
-    protected virtual void OnEnable()
-    {
-        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            agent.Warp(hit.position);
-        }
-    }
+    //protected virtual void OnEnable()
+    //{
+    //    if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+    //    {
+    //        agent.Warp(hit.position);
+    //    }
+    //}
 
     protected virtual void Update()
     {
@@ -69,7 +69,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     public virtual void TakeDamage(int amount)
     {
         currentHealth -= amount;
-        Debug.Log($"{gameObject.name} took {amount} damage. Remaining: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -77,9 +76,11 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         }
     }
 
+    public event System.Action<Enemy> OnDeath;
+
     protected virtual void Die()
     {
-        Debug.Log($"{gameObject.name} has died.");
+        OnDeath?.Invoke(this); // Notify RoomEncounter
         Destroy(gameObject);
     }
 }

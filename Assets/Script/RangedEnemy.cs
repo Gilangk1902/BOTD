@@ -14,10 +14,10 @@ public class RangedEnemy : Enemy
 
     protected override void OnChasing(float distance)
     {
-        if (distance <= rangedRange)
-        {
-            Attack();
-        }
+        //if (distance <= rangedRange)
+        //{
+        //    Attack();
+        //}
     }
 
     public override void Attack()

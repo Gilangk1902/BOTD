@@ -138,7 +138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -264,7 +264,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b5343ae73c82596489e052eaeab9a714, type: 2}
   chestPrefab: {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
   characterPrefab: {fileID: 2826078552957777887, guid: 16fa8b34c2dc08e4892d692b8b4a4006, type: 3}
-  useBoxColliders: 1
+  useBoxColliders: 0
   reloadKey: 8
   toggleMapKey: 109
   constructionDelay: 0

@@ -19,11 +19,12 @@ public class EnemySpawnTrigger : MonoBehaviour
 
         hasTriggered = true;
 
-        EnemySpawner[] spawners = GetComponentsInChildren<EnemySpawner>();
-        foreach (var spawner in spawners)
+        RoomEncounter encounter = roomRoot.GetComponent<RoomEncounter>();
+        if (encounter != null)
         {
-            spawner.SpawnEnemy();
+            encounter.StartEncounter();
         }
     }
+
 }
 

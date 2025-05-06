@@ -105,14 +105,12 @@ public class WeaponController : MonoBehaviour
         if (Time.time - current.lastFireTime < data.fireRate) return;
         if (current.currentAmmo <= 0)
         {
-            Debug.Log("Out of ammo!");
             return;
         }
 
         current.lastFireTime = Time.time;
         current.currentAmmo--; // Kurangi hanya sekali meskipun multi-raycast
 
-        Debug.Log($"Firing {data.bulletPerShot} pellets. Ammo left: {current.currentAmmo}");
 
         for (int i = 0; i < data.bulletPerShot; i++)
         {

@@ -9,11 +9,14 @@ public class Door : MonoBehaviour
     public float interactionDistance = 5f;
     public KeyCode interactKey = KeyCode.E;
 
-    [Header("Layer Mask")]
+    [Header("References")]
+    public Transform doorTransform; // assign the child that will rotate
     public LayerMask interactableLayer;
 
-    private bool isOpen = false;
+    public bool isOpen = false;
     private bool isMoving = false;
+    private bool isLocked = false;
+
     private Quaternion closedRotation;
     private Quaternion openRotation;
 
@@ -25,14 +28,19 @@ public class Door : MonoBehaviour
 
     void Start()
     {
-        closedRotation = transform.localRotation;
+        if (doorTransform == null)
+        {
+            Debug.LogError("Door: 'doorTransform' not assigned.");
+            return;
+        }
+
+        closedRotation = doorTransform.localRotation;
         openRotation = Quaternion.Euler(0f, openAngle, 0f) * closedRotation;
 
-        // Ambil collider dari objek ini
-        doorCollider = GetComponent<BoxCollider>();
+        doorCollider = GetComponentInChildren<BoxCollider>();
         if (doorCollider == null)
         {
-            Debug.LogWarning("Tidak ditemukan BoxCollider pada pintu.");
+            Debug.LogWarning("Door: BoxCollider not found.");
         }
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -49,22 +57,23 @@ public class Door : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Prompt object tidak ditemukan di path: UI/Canvas/Prompt");
+                Debug.LogWarning("Prompt object not found at path: UI/Canvas/Prompt");
             }
         }
 
         if (playerCamera == null)
         {
-            Debug.LogError("Camera di player tidak ditemukan.");
+            Debug.LogError("Door: Player camera not found.");
         }
     }
 
     void Update()
     {
         if (player == null || isMoving || playerCamera == null) return;
+
         PromtController();
 
-        if (CanInteract() && Input.GetKeyDown(interactKey))
+        if (!isLocked && CanInteract() && Input.GetKeyDown(interactKey))
         {
             StartCoroutine(ToggleDoor());
         }
@@ -76,7 +85,7 @@ public class Door : MonoBehaviour
         RaycastHit hit;
         Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
 
-        if (Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
+        if (!isLocked && Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
         {
             ShowPrompt(true);
         }
@@ -88,10 +97,10 @@ public class Door : MonoBehaviour
 
     bool CanInteract()
     {
+        if (isLocked) return false;
+
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         RaycastHit hit;
-        Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
-
         if (Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
         {
             return hit.transform == transform || hit.transform.IsChildOf(transform);
@@ -107,35 +116,74 @@ public class Door : MonoBehaviour
         }
     }
 
-    IEnumerator ToggleDoor()
+    public IEnumerator ToggleDoor()
     {
         isMoving = true;
-        Quaternion startRotation = transform.localRotation;
+        Quaternion startRotation = doorTransform.localRotation;
         Quaternion targetRotation = isOpen ? closedRotation : openRotation;
 
-        // Jadikan trigger saat membuka
         if (doorCollider != null)
-        {
             doorCollider.isTrigger = true;
-        }
 
         float t = 0f;
         while (t < 1f)
         {
             t += Time.deltaTime * openSpeed;
-            transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t);
+            doorTransform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t);
             yield return null;
         }
 
-        transform.localRotation = targetRotation;
+        doorTransform.localRotation = targetRotation;
         isOpen = !isOpen;
         isMoving = false;
 
-        // Jika menutup kembali, non-trigger supaya solid lagi
         if (doorCollider != null)
-        {
-            doorCollider.isTrigger = isOpen; // true saat terbuka, false saat tertutup
-        }
+            doorCollider.isTrigger = isOpen;
     }
+
+    public void Lock()
+    {
+        isLocked = true;
+        ShowPrompt(false);
+    }
+
+    public void Unlock()
+    {
+        isLocked = false;
+    }
+
+    public void ForceClose()
+    {
+        if (isMoving) return;
+
+        StopAllCoroutines();
+        StartCoroutine(ForceCloseCoroutine());
+    }
+
+    private IEnumerator ForceCloseCoroutine()
+    {
+        isMoving = true;
+
+        Quaternion startRotation = doorTransform.localRotation;
+        Quaternion targetRotation = closedRotation;
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * openSpeed;
+            doorTransform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t);
+            yield return null;
+        }
+
+        doorTransform.localRotation = targetRotation;
+        isMoving = false;
+
+        if (doorCollider != null)
+            doorCollider.isTrigger = false;
+
+        isOpen = !isOpen;
+        // Don't change isOpen — we want to preserve original state
+    }
+
 
 }

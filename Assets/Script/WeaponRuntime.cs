@@ -7,11 +7,13 @@ public class WeaponRuntime
     public WeaponData data;
     public int currentAmmo;
     public float lastFireTime;
+    private PlayerStat playerStat;
 
-    public WeaponRuntime(WeaponData data)
+    public WeaponRuntime(WeaponData data, PlayerStat playerStat)
     {
         this.data = data;
-        this.currentAmmo = data.maxAmmo;
+        this.playerStat = playerStat;
+        this.currentAmmo = data.maxAmmo + (int) (data.maxAmmo * playerStat.getAdditionalClipSize());
         this.lastFireTime = -data.fireRate;
     }
 }

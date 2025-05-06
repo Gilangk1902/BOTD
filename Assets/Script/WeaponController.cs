@@ -18,6 +18,8 @@ public class WeaponController : MonoBehaviour
     private float lastMeleeTime = -999f;
     public LayerMask shootableLayers = Physics.DefaultRaycastLayers; // assign in Inspector
 
+    [SerializeField] private PlayerStat playerStat;
+
     private void Start()
     {
         for (int i = 0; i < weaponSlots.Length; i++)
@@ -28,7 +30,7 @@ public class WeaponController : MonoBehaviour
                 SetWeaponPhysics(weaponObjects[i], false);
                 weaponObjects[i].SetActive(false);
 
-                weaponStates[i] = new WeaponRuntime(weaponSlots[i]); // <- tambahkan ini
+                weaponStates[i] = new WeaponRuntime(weaponSlots[i], playerStat); // <- tambahkan ini
             }
         }
 
@@ -77,7 +79,6 @@ public class WeaponController : MonoBehaviour
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, meleeRange))
         {
-            Debug.Log("Melee hit: " + hit.collider.name);
 
             IDamageable damageable = hit.collider.GetComponent<IDamageable>();
             if (damageable != null)
@@ -89,7 +90,6 @@ public class WeaponController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Melee missed.");
         }
     }
 
@@ -112,7 +112,7 @@ public class WeaponController : MonoBehaviour
         current.currentAmmo--; // Kurangi hanya sekali meskipun multi-raycast
 
 
-        for (int i = 0; i < data.bulletPerShot; i++)
+        for (int i = 0; i < data.bulletPerShot + playerStat.getExtraBulletPerShot(); i++)
         {
             Vector3 baseDirection = playerCamera.transform.forward;
             Vector3 spreadOffset = new Vector3(
@@ -150,14 +150,12 @@ public class WeaponController : MonoBehaviour
     IEnumerator ReloadCoroutine()
     {
         isReloading = true;
-        Debug.Log("Reloading...");
 
         yield return new WaitForSeconds(weaponStates[currentSlot].data.reloadTime);
 
-        weaponStates[currentSlot].currentAmmo = weaponStates[currentSlot].data.maxAmmo;
+        weaponStates[currentSlot].currentAmmo = weaponStates[currentSlot].data.maxAmmo + (int)(weaponStates[currentSlot].data.maxAmmo * playerStat.getAdditionalClipSize());
         isReloading = false;
 
-        Debug.Log("Reloaded!");
     }
 
 
@@ -199,8 +197,8 @@ public class WeaponController : MonoBehaviour
             {
                 weaponSlots[i] = newWeapon;
                 weaponObjects[i] = Instantiate(newWeapon.weaponModelPrefab, weaponHolder);
-                SetWeaponPhysics(weaponObjects[i], false); // <- disable physics
-                weaponStates[i] = new WeaponRuntime(newWeapon);
+                SetWeaponPhysics(weaponObjects[i], false);
+                weaponStates[i] = new WeaponRuntime(newWeapon, playerStat);
                 weaponObjects[i].SetActive(false);
 
                 if (i == currentSlot)
@@ -211,6 +209,7 @@ public class WeaponController : MonoBehaviour
 
         return false;
     }
+
 
     void DropCurrentWeapon()
     {
@@ -246,6 +245,11 @@ public class WeaponController : MonoBehaviour
     public WeaponRuntime GetCurrentRuntime()
     {
         return weaponStates[currentSlot];
+    }
+
+    public PlayerStat GetPlayerStat()
+    {
+        return playerStat;
     }
 
 }

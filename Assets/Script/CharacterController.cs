@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    [SerializeField] private PlayerStat playerStat;
     public float mouseSensitivity = 2f;
     public Transform playerCamera;
     public float verticalLookLimit = 80f;
@@ -53,7 +53,7 @@ public class CharacterController : MonoBehaviour
         float moveZ = Input.GetAxisRaw("Vertical");
 
         Vector3 inputDir = new Vector3(moveX, 0f, moveZ).normalized;
-        targetVelocity = transform.TransformDirection(inputDir) * moveSpeed;
+        targetVelocity = transform.TransformDirection(inputDir) * playerStat.getMoveSpeed();
 
         // SmoothDamp untuk transisi kecepatan yang halus
         Vector3 velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref currentVelocity, inputDir.magnitude > 0 ? 1f / acceleration : 1f / deceleration);

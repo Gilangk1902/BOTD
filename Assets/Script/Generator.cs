@@ -455,7 +455,32 @@ public class Generator : MonoBehaviour
             Transform chosen = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
             // Spawn chest
-            Instantiate(chestPrefab, chosen.position, chosen.rotation, tile.tile);
+            GameObject chest = Instantiate(chestPrefab, chosen.position, chosen.rotation, tile.tile);
+            chest.transform.SetParent(chosen.transform);
+        }
+    }
+
+    void PlaceDoorsOnConnectedRoomConnectors()
+    {
+        foreach (Tile tile in generatedTiles)
+        {
+            if (tile.tile == null) continue;
+
+            if (!tile.tile.name.Contains("Room")) continue;
+
+            Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
+
+            foreach (Connector connector in connectors)
+            {
+                if (connector.isConnected)
+                {
+                    GameObject door = Instantiate(doorPrefabs[0], Vector3.zero, Quaternion.identity);
+                    door.name = doorPrefabs[0].name;
+                    door.transform.SetParent(connector.transform);
+                    door.transform.localPosition = Vector3.zero;
+                    door.transform.localRotation = Quaternion.identity;
+                }
+            }
         }
     }
 
@@ -504,29 +529,6 @@ public class Generator : MonoBehaviour
         Instantiate(characterPrefab, Vector3.zero, Quaternion.identity);
     }
 
-    void PlaceDoorsOnConnectedRoomConnectors()
-    {
-        foreach (Tile tile in generatedTiles)
-        {
-            if (tile.tile == null) continue;
-
-            if (!tile.tile.name.Contains("Room")) continue;
-
-            Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
-
-            foreach (Connector connector in connectors)
-            {
-                if (connector.isConnected)
-                {
-                    GameObject door = Instantiate(doorPrefabs[0], Vector3.zero, Quaternion.identity);
-                    door.name = doorPrefabs[0].name;
-                    door.transform.SetParent(connector.transform);
-                    door.transform.localPosition = Vector3.zero;
-                    door.transform.localRotation = Quaternion.identity;
-                }
-            }
-        }
-    }
 
 
 }

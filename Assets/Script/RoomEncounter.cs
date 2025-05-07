@@ -9,9 +9,11 @@ public class RoomEncounter : MonoBehaviour
 
     [Header("Room Connectors (Assign these in prefab)")]
     public Transform[] connectors;
+    public Transform[] chestSpawnPoints;
 
-    private List<Door> doors = new List<Door>();
+    public List<Door> doors = new List<Door>();
     public List<Door> doorsThatWereOpen = new List<Door>();
+    public List<Chest> chestsInRoom = new List<Chest>(); // Assign these in Inspector or find them dynamically
 
     private Generator generator;
 
@@ -36,8 +38,21 @@ public class RoomEncounter : MonoBehaviour
                     doors.Add(door);
             }
         }
+        foreach(var chestSpawnPoint in chestSpawnPoints)
+        {
+            if(chestSpawnPoint == null) continue;
 
-        Debug.Log($"RoomEncounter initialized. Doors found: {doors.Count}");
+            Chest[] foundChests = chestSpawnPoint.GetComponentsInChildren<Chest>(true);
+            foreach(var chest in foundChests)
+            {
+                if (!chestsInRoom.Contains(chest)) { 
+                    chestsInRoom.Add(chest);
+                }
+            }
+        }
+
+        Debug.Log($"chest found: {chestsInRoom.Count}");
+
     }
 
     public void StartEncounter()
@@ -68,6 +83,12 @@ public class RoomEncounter : MonoBehaviour
                 e.OnDeath += CheckEnemiesRemaining;
             }
         }
+
+        foreach (var chest in chestsInRoom)
+        {
+            chest.LockChest();
+        }
+
     }
 
     private void CheckEnemiesRemaining(Enemy enemy)
@@ -91,6 +112,11 @@ public class RoomEncounter : MonoBehaviour
                 StartCoroutine(door.ToggleDoor());
                 Debug.Log("open door automatically");
             }
+        }
+
+        foreach (var chest in chestsInRoom)
+        {
+            chest.UnlockChest();
         }
     }
 }

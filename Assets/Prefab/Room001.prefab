@@ -313,7 +313,11 @@ MonoBehaviour:
   connectors:
   - {fileID: 705019997287309518}
   - {fileID: 782035691626558620}
+  chestSpawnPoints:
+  - {fileID: 6241922824701359255}
+  - {fileID: 6542886309370103970}
   doorsThatWereOpen: []
+  chestsInRoom: []
 --- !u!1001 &4214029344561154898
 PrefabInstance:
   m_ObjectHideFlags: 0

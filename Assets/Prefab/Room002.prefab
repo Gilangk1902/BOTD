@@ -255,7 +255,11 @@ MonoBehaviour:
   - {fileID: 3472186445229374034}
   - {fileID: 126107403771679941}
   - {fileID: 5872253098927430824}
+  chestSpawnPoints:
+  - {fileID: 2615052782886424380}
+  - {fileID: 7106583382950161076}
   doorsThatWereOpen: []
+  chestsInRoom: []
 --- !u!1001 &1907485478865232484
 PrefabInstance:
   m_ObjectHideFlags: 0

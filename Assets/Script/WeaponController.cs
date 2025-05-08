@@ -48,6 +48,8 @@ public class WeaponController : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f)
+            return;
         if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(1);
         if (Input.GetKeyDown(KeyCode.G)) DropCurrentWeapon();

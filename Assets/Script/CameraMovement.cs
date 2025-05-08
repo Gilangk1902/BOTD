@@ -7,13 +7,16 @@ public class CameraMovement : MonoBehaviour
     public float dragSpeed = 80f;
     private Vector3 dragOrigin;
 
-    void LateUpdate()
+    void Update()
     {
+
         HandleMouseDrag();
     }
 
     void HandleMouseDrag()
     {
+        
+
         if (Input.GetMouseButtonDown(2)) 
         {
             dragOrigin = Input.mousePosition;

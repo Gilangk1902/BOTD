@@ -21,6 +21,8 @@ public class CharacterController : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f)
+            return;
         LookAround();
     }
 

@@ -142,11 +142,8 @@ MonoBehaviour:
   lid: {fileID: 7303106049562254875}
   openAngle: 90
   openSpeed: 2
-  itemPrefabs:
-  - {fileID: 4589088107824547817, guid: ad5aad70a6703fb40ac81d72c165813b, type: 3}
-  - {fileID: 5487128404018934548, guid: bea3bb0690257224b9a59b7bb289d56b, type: 3}
-  - {fileID: 7371399161455917187, guid: 8b0c2780375ce584d9fe455219c3bd6c, type: 3}
-  - {fileID: 4277485109741515200, guid: e38a697d24fe4144781a71ef312f1e20, type: 3}
+  itemDatas:
+  - {fileID: 11400000, guid: 7448bfb8fcd289f4386b213471216f3e, type: 2}
   spawnPoint: {fileID: 1466877571118512587}
   interactDistance: 3
   interactKey: 101

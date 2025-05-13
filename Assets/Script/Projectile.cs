@@ -20,14 +20,29 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        IDamageable target = other.GetComponent<IDamageable>();
-        if (target != null && other.CompareTag("Player"))
-        {
-            target.TakeDamage(damage);
-            Debug.Log($"Projectile hit {other.name} for {damage} damage!");
-        }
+        int layer = other.gameObject.layer;
+        string layerName = LayerMask.LayerToName(layer);
 
-        Destroy(gameObject); // Destroy on impact
+        // Cek apakah terkena layer "Tile" atau tag "Player"
+        bool hitTile = layerName == "Tile";
+        bool hitPlayer = other.CompareTag("Player");
+
+        if (hitTile || hitPlayer)
+        {
+            if (hitPlayer)
+            {
+                IDamageable target = other.GetComponent<IDamageable>();
+                if (target != null)
+                {
+                    target.TakeDamage(damage);
+                    Debug.Log($"Projectile hit {other.name} for {damage} damage!");
+                }
+            }
+
+            Destroy(gameObject); // Hancurkan peluru jika mengenai Player atau Tile
+        }
     }
+
+
 }
 

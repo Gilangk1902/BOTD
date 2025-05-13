@@ -13,7 +13,7 @@ public class Generator : MonoBehaviour
     public GameObject[] doorPrefabs;
     public GameObject[] hallwayPrefabs;
     public RoomScriptable[] _roomPrefabs;
-    public GameObject chestPrefab;
+    public GameObject[] chestPrefab;
     public GameObject characterPrefab;
 
     [Header("Debugging Options")]
@@ -94,12 +94,20 @@ public class Generator : MonoBehaviour
 
         int numberOfRoomsOnMain = Mathf.CeilToInt((float) numberOfRooms * 0.6f);
 
-        while(generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRoomsOnMain)
+        while(generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRoomsOnMain + 1)
         {
             yield return new WaitForSeconds(constructionDelay);
             tileFrom = tileTo;
 
-            if (tileFrom.name.Contains("Room"))
+            if (generatedTiles.Count(x => x.tile.name.Contains("Room")) == numberOfRoomsOnMain)
+            {
+                tileTo = CreateExitTile();
+                ConnectTiles();
+                CollisionCheck();
+
+                Debug.Log("AKH");
+            }
+            else if (tileFrom.name.Contains("Room"))
             {
                 tileTo = CreateHallwayTile();
                 ConnectTiles();
@@ -357,6 +365,18 @@ public class Generator : MonoBehaviour
         goTile.name = hallwayPrefabs[index].name;
         Transform origin = generatedTiles[generatedTiles.FindIndex(x => x.tile == tileFrom)].tile;
         generatedTiles.Add(new Tile(goTile.transform, origin));
+
+        Debug.Log("create exit");
+        return goTile.transform;
+    }
+
+    Transform CreateExitTile()
+    {
+        GameObject goTile = Instantiate(exitPrefabs[0], Vector3.zero, Quaternion.identity, container) as GameObject;
+        goTile.name = exitPrefabs[0].name + "_Exit";
+        Transform origin = generatedTiles[generatedTiles.FindIndex(x => x.tile == tileFrom)].tile;
+        generatedTiles.Add(new Tile(goTile.transform, origin));
+
         return goTile.transform;
     }
 
@@ -365,7 +385,6 @@ public class Generator : MonoBehaviour
         //int index = Random.Range(0, roomPrefabs.Length);
         int index = GetWeightedRandomRoom();
 
-        Debug.Log("create room tile");
 
         GameObject goTile = Instantiate(_roomPrefabs[index].prefab, Vector3.zero, Quaternion.identity, container) as GameObject;
         goTile.name = _roomPrefabs[index].name;
@@ -438,27 +457,45 @@ public class Generator : MonoBehaviour
         {
             if (tile.tile == null) continue;
 
-            // Only spawn chest on Room tiles
             if (!tile.tile.name.Contains("Room")) continue;
 
-            // Find all spawn points (by name, tag, or component)
-            Transform[] spawnPoints = tile.tile.GetComponentsInChildren<Transform>()
-                .Where(t => t.name.Equals("ChestSpawnPoint")).ToArray();
-
-            if (spawnPoints.Length == 0)
+            if (tile.tile.name.ToLower().Contains("start"))
             {
-                Debug.LogWarning("No chest spawn points in: " + tile.tile.name);
-                continue;
+                Transform[] spawnPoints = tile.tile.GetComponentsInChildren<Transform>()
+                    .Where(t => t.name.Equals("ChestSpawnPoint")).ToArray();
+
+                if (spawnPoints.Length == 0)
+                {
+                    Debug.LogWarning("No chest spawn points in: " + tile.tile.name);
+                    continue;
+                }
+
+                Transform chosen = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                GameObject chest = Instantiate(chestPrefab[0], chosen.position, chosen.rotation, tile.tile);
+
+                chest.transform.SetParent(chosen.transform);
+            }
+            else
+            {
+                Transform[] spawnPoints = tile.tile.GetComponentsInChildren<Transform>()
+                    .Where(t => t.name.Equals("ChestSpawnPoint")).ToArray();
+
+                if (spawnPoints.Length == 0)
+                {
+                    Debug.LogWarning("No chest spawn points in: " + tile.tile.name);
+                    continue;
+                }
+
+                Transform chosen = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                int availIndex = Random.Range(0, chestPrefab.Length);
+                GameObject chest = Instantiate(chestPrefab[availIndex], chosen.position, chosen.rotation, tile.tile);
+
+                chest.transform.SetParent(chosen.transform);
             }
 
-            // Randomly select one spawn point
-            Transform chosen = spawnPoints[Random.Range(0, spawnPoints.Length)];
-
-            // Spawn chest
-            GameObject chest = Instantiate(chestPrefab, chosen.position, chosen.rotation, tile.tile);
-            chest.transform.SetParent(chosen.transform);
         }
     }
+
 
     void PlaceDoorsOnConnectedRoomConnectors()
     {

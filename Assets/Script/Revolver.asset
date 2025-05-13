@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Revolver
   m_EditorClassIdentifier: 
   weaponName: Revolver
-  weaponModelPrefab: {fileID: 919132149155446097, guid: 984735c3537a0804e81c2d6e708d291e, type: 3}
+  weaponModelPrefab: {fileID: 5382679640453909587, guid: 3779caf448009154a8b49554eaa76827, type: 3}
   pickupPrefab: {fileID: 3613113267833236507, guid: c6a5dd70abad3a045828a2b7a19819e7, type: 3}
-  damage: 25
+  damage: 50
   fireRate: 1
   maxAmmo: 6
   reloadTime: 1

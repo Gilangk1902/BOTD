@@ -8,7 +8,8 @@ public class Chest : MonoBehaviour
     public float openSpeed = 2f; // Speed of opening
 
     [Header("Items to Spawn")]
-    public GameObject[] itemPrefabs; // Assign multiple item prefabs
+    public ItemData[] itemDatas; // Replace itemPrefabs with this
+
     public Transform spawnPoint; // Assign the spawn point Transform
 
     [Header("Interaction Settings")]
@@ -83,12 +84,12 @@ public class Chest : MonoBehaviour
         isOpened = true;
         StartCoroutine(OpenLid());
 
-        // Spawn a random item
-        if (itemPrefabs != null && itemPrefabs.Length > 0 && spawnPoint != null)
+        GameObject selectedItem = GetWeightedRandomItem();
+        if (selectedItem != null && spawnPoint != null)
         {
-            int randomIndex = Random.Range(0, itemPrefabs.Length);
-            Instantiate(itemPrefabs[randomIndex], spawnPoint.position, spawnPoint.rotation);
+            Instantiate(selectedItem, spawnPoint.position, spawnPoint.rotation);
         }
+
     }
 
     private System.Collections.IEnumerator OpenLid()
@@ -106,4 +107,31 @@ public class Chest : MonoBehaviour
 
         lid.localRotation = endRotation;
     }
+
+    private GameObject GetWeightedRandomItem()
+    {
+        if (itemDatas == null || itemDatas.Length == 0)
+            return null;
+
+        float totalWeight = 0f;
+        foreach (var item in itemDatas)
+        {
+            totalWeight += item.weight;
+        }
+
+        float randomValue = Random.Range(0f, totalWeight);
+        float currentSum = 0f;
+
+        foreach (var item in itemDatas)
+        {
+            currentSum += item.weight;
+            if (randomValue <= currentSum)
+            {
+                return item.prefab;
+            }
+        }
+
+        return itemDatas[0].prefab; // fallback
+    }
+
 }

@@ -9,6 +9,8 @@ public class PlayerStat : MonoBehaviour, IDamageable
     private int currentHealth;
     [SerializeField] private float additionalClipSize;
     [SerializeField] private int extraBulletPerShot = 0;
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private MonoBehaviour[] componentsToDisable; 
 
     void Start()
     {
@@ -29,7 +31,23 @@ public class PlayerStat : MonoBehaviour, IDamageable
     void Die()
     {
         Debug.Log("Player died!");
+
+        // Disable player controls
+        foreach (MonoBehaviour comp in componentsToDisable)
+        {
+            if (comp != null)
+                comp.enabled = false;
+        }
+
+        // Show Game Over UI
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(true);
+
+        // Unlock and show cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
+
 
 
     public float getAdditionalClipSize()

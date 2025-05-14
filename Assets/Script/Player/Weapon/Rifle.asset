@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5513927d82c378f40897423cd06df588, type: 3}
+  m_Name: Rifle
+  m_EditorClassIdentifier: 
+  weaponName: 
+  weaponModelPrefab: {fileID: 727658035789590683, guid: c8b4e195af6469240ac144a7e69d500e, type: 3}
+  pickupPrefab: {fileID: 7393614462716664802, guid: ef84fbd96f3b7d740b3de3f3b2c61140, type: 3}
+  damage: 25
+  fireRate: 0.6
+  maxAmmo: 10
+  reloadTime: 1.5
+  bulletPerShot: 1
+  spreadAmount: 0.02

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -8,9 +7,19 @@ public class Projectile : MonoBehaviour
     public int damage = 10;
     public float lifeTime = 5f;
 
-    private void Start()
+    private Coroutine lifeCoroutine;
+
+    private void OnEnable()
     {
-        Destroy(gameObject, lifeTime); // auto-destroy after X seconds
+        // Mulai timer untuk auto-return ke pool
+        lifeCoroutine = StartCoroutine(ReturnAfterTime());
+    }
+
+    private void OnDisable()
+    {
+        // Bersihkan jika coroutine masih berjalan
+        if (lifeCoroutine != null)
+            StopCoroutine(lifeCoroutine);
     }
 
     private void Update()
@@ -20,14 +29,32 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        IDamageable target = other.GetComponent<IDamageable>();
-        if (target != null && other.CompareTag("Player"))
-        {
-            target.TakeDamage(damage);
-            Debug.Log($"Projectile hit {other.name} for {damage} damage!");
-        }
+        int layer = other.gameObject.layer;
+        string layerName = LayerMask.LayerToName(layer);
 
-        Destroy(gameObject); // Destroy on impact
+        bool hitTile = layerName == "Tile";
+        bool hitPlayer = other.CompareTag("Player");
+
+        if (hitTile || hitPlayer)
+        {
+            if (hitPlayer)
+            {
+                IDamageable target = other.GetComponent<IDamageable>();
+                if (target != null)
+                {
+                    target.TakeDamage(damage);
+                    Debug.Log($"Projectile hit {other.name} for {damage} damage!");
+                }
+            }
+
+            // Kembalikan ke pool (bukan Destroy)
+            ProjectilePool.Instance.ReturnProjectile(gameObject);
+        }
+    }
+
+    private IEnumerator ReturnAfterTime()
+    {
+        yield return new WaitForSeconds(lifeTime);
+        ProjectilePool.Instance.ReturnProjectile(gameObject);
     }
 }
-

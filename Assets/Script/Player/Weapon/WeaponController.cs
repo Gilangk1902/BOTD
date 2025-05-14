@@ -96,7 +96,6 @@
                     damageable.TakeDamage(meleeDamage);
                 }
 
-                // TODO: tambahkan animasi, efek, suara
             }
             else
             {
@@ -156,23 +155,23 @@
                     target.TakeDamage(data.damage);
                 }
 
-                GameObject trail = Instantiate(bulletTrailPrefab);
-                LineRenderer lr = trail.GetComponent<LineRenderer>();
-                lr.SetPosition(0, muzzle.transform.position);
-                lr.SetPosition(1, hit.point);
-                Destroy(trail, .3f);
+                GameObject trail = BulletTrailPool.Instance.GetTrail();
+                //trail.transform.position = muzzle.transform.position; // optional
+
+                BulletTrail bt = trail.GetComponent<BulletTrail>();
+                bt.Init(muzzle.transform.position, hit.point, 0.1f);
+
             }
             else
             {
                 Vector3 endPoint = ray.origin + finalDirection * 1000f;
                 Debug.DrawRay(ray.origin, finalDirection * 1000f, Color.red, .1f);
 
-                GameObject trail = Instantiate(bulletTrailPrefab);
-                LineRenderer lr = trail.GetComponent<LineRenderer>();
-                lr.SetPosition(0, muzzle.transform.position);
-                lr.SetPosition(1, endPoint);
-                Destroy(trail, .3f);
+                GameObject trail = BulletTrailPool.Instance.GetTrail();
+                BulletTrail bt = trail.GetComponent<BulletTrail>();
+                bt.Init(muzzle.transform.position, endPoint, 0.1f); // <- pakai endPoint, bukan hit.point
             }
+
         }
 
         void TryReload()
@@ -299,13 +298,12 @@
         {
             if (weaponSlots[currentSlot] == null) return;
 
-            // Spawn pickup prefab in front of player
-            GameObject dropped = Instantiate(weaponSlots[currentSlot].pickupPrefab, transform.position + transform.forward, Quaternion.identity);
+            GameObject dropped = Instantiate(
+                weaponSlots[currentSlot].pickupPrefab, transform.position + transform.forward, Quaternion.identity
+            );
 
-            // Enable physics
             SetWeaponPhysics(dropped, true);
 
-            // Clean up current weapon
             Destroy(weaponObjects[currentSlot]);
             weaponSlots[currentSlot] = null;
             weaponObjects[currentSlot] = null;
@@ -366,7 +364,6 @@
             Vector3 downPos = defaultWeaponPos - new Vector3(0, 1.5f, 0);
             float t = 0f;
 
-            // Turun
             while (t < 1f)
             {
                 t += Time.deltaTime * 5f;
@@ -374,12 +371,10 @@
                 yield return null;
             }
 
-            onMid?.Invoke(); // panggil event di tengah (ganti senjata atau reload isi peluru)
+            onMid?.Invoke();
 
-            // Tunggu sampai selesai
             yield return new WaitForSeconds(duration);
 
-            // Naik
             t = 0f;
             while (t < 1f)
             {

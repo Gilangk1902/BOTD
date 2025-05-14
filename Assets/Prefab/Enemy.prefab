@@ -81,7 +81,7 @@ CapsuleCollider:
   m_Radius: 0.69
   m_Height: 3.19
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.58, z: 0}
 --- !u!54 &6908985604720660717
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -126,7 +126,7 @@ MonoBehaviour:
   stopDistance: 3
   chaseSpeed: 3.5
   attackPoint: {fileID: 1442394378722077171}
-  attackCooldown: 1.5
+  attackCooldown: 1
   attackDelay: 1
   attackDamage: 10
   attackRange: 1.5

@@ -81,7 +81,7 @@ CapsuleCollider:
   m_Radius: 0.69
   m_Height: 3.19
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.55, z: 0}
 --- !u!54 &6908985604720660717
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -128,6 +128,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 5829162908752691098, guid: b5dfa50e431fd374b80496f5cb5a83c3, type: 3}
   shootPoint: {fileID: 1442394378722077171}
   attackCooldown: 2
+  attackDelay: 0.2
   rangedRange: 15
   projectileDamage: 10
 --- !u!1 &7959293959812125767

@@ -37,12 +37,11 @@ public class RangedEnemy : Enemy
 
         lastAttackTime = Time.time;
 
-        // Arahkan ke target
         Vector3 dir = (player.position - shootPoint.position).normalized;
         Quaternion rot = Quaternion.LookRotation(dir);
 
-        // Instantiate projectile
-        GameObject proj = Instantiate(projectilePrefab, shootPoint.position, rot);
+        GameObject proj = ProjectilePool.Instance.GetProjectile(shootPoint.position, rot);
+
         Projectile p = proj.GetComponent<Projectile>();
         if (p != null)
         {
@@ -51,6 +50,7 @@ public class RangedEnemy : Enemy
 
         Debug.Log($"{gameObject.name} fired projectile at player.");
     }
+
 
     protected override float GetAttackCoolDown()
     {

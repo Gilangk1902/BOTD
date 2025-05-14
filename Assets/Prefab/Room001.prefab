@@ -111,6 +111,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 4029054599921276760, guid: 6d2b6e0620b17394a8d63c7389b4d260, type: 3}
+      propertyPath: navmeshSearchRadius
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4029054599921276760, guid: 6d2b6e0620b17394a8d63c7389b4d260, type: 3}
+      propertyPath: enemyPoolTags.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4029054599921276760, guid: 6d2b6e0620b17394a8d63c7389b4d260, type: 3}
+      propertyPath: enemyPoolTags.Array.data[0]
+      value: MeleeEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4029054599921276760, guid: 6d2b6e0620b17394a8d63c7389b4d260, type: 3}
+      propertyPath: enemyPoolTags.Array.data[1]
+      value: RangedEnemy
+      objectReference: {fileID: 0}
     - target: {fileID: 5276247096645088751, guid: 6d2b6e0620b17394a8d63c7389b4d260, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

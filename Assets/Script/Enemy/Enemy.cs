@@ -86,6 +86,42 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             isAttacking = false;
         }
     }
+
+    protected virtual void OnEnable()
+    {
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+
+        currentHealth = maxHealth;
+        isAttacking = false;
+
+        // Reset NavMeshAgent
+        agent.enabled = false;
+
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            transform.position = hit.position;
+            agent.enabled = true;
+            agent.Warp(hit.position);
+        }
+        else
+        {
+            Debug.LogWarning($"{gameObject.name} not on NavMesh — disabling NavMeshAgent");
+            agent.enabled = false;
+
+        }
+        // Reset animator
+        if (animator != null)
+        {
+            animator.Rebind();
+            animator.Update(0f);
+        }
+    }
+
+
+
+
+
     protected virtual IEnumerator HandleAttack()
     {
         isAttacking = true;
@@ -129,8 +165,9 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     protected virtual void Die()
     {
         OnDeath?.Invoke(this);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
+
     protected void SetAgentActive(bool active)
 {
     agent.updatePosition = active;

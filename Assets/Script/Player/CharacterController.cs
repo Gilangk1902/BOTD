@@ -19,7 +19,7 @@ public class CharacterController : MonoBehaviour
 
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (Time.timeScale == 0f)
             return;

@@ -14,6 +14,10 @@ public class RangedEnemy : Enemy
 
     private float lastAttackTime = -999f;
 
+    [Header("Audio")]
+    public AudioClip shootClip;
+    public AudioSource audioSource;
+
     protected override void Start()
     {
         base.Start(); // penting agar animator, player, agent di-setup
@@ -48,9 +52,13 @@ public class RangedEnemy : Enemy
             p.damage = projectileDamage;
         }
 
+        if (shootClip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(shootClip);
+        }
+
         Debug.Log($"{gameObject.name} fired projectile at player.");
     }
-
 
     protected override float GetAttackCoolDown()
     {

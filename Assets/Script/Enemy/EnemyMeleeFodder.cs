@@ -24,10 +24,9 @@ public class EnemyMeleeFodder : Enemy
         if (attackPoint == null) return;
 
         lastAttackTime = Time.time;
-
-        // This attack logic can be triggered via animation event as well
         PerformMeleeHit();
     }
+
 
     private void PerformMeleeHit()
     {

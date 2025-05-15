@@ -462,6 +462,7 @@ GameObject:
   - component: {fileID: 1894844320}
   - component: {fileID: 1894844319}
   - component: {fileID: 1894844321}
+  - component: {fileID: 1894844322}
   m_Layer: 0
   m_Name: Pool
   m_TagString: Untagged
@@ -517,6 +518,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trailPrefab: {fileID: 6798891704280135985, guid: 5972e9b6dd1591e42bcc6076a26db344, type: 3}
   poolSize: 100
+--- !u!114 &1894844322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894844318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a414cfdd09a39045903d83c4ed3c8cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 5829162908752691098, guid: b5dfa50e431fd374b80496f5cb5a83c3, type: 3}
+  poolSize: 20
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

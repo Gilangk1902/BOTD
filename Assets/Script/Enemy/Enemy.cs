@@ -25,6 +25,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     public event System.Action<Enemy> OnDeath;
 
+    [Header("Audio")]
+    public AudioClip hitClip;
+    public AudioSource audioSource;
+
     protected virtual void Start()
     {
         currentHealth = maxHealth;
@@ -118,10 +122,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-
-
-
-
     protected virtual IEnumerator HandleAttack()
     {
         isAttacking = true;
@@ -158,9 +158,16 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     public virtual void TakeDamage(int amount)
     {
         currentHealth -= amount;
+
+        if (hitClip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(hitClip);
+        }
+
         if (currentHealth <= 0)
             Die();
     }
+
 
     protected virtual void Die()
     {

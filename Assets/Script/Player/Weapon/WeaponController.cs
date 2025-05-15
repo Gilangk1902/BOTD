@@ -25,6 +25,11 @@
         private Vector3 defaultWeaponPos;
         private Coroutine weaponAnimRoutine;
 
+        [Header("Audio")]
+        public AudioSource audioSource;
+        public AudioClip gunshotClip;
+        public AudioClip reloadClip;
+
 
         private void Start()
         {
@@ -135,6 +140,11 @@
 
         void shoot(WeaponData data)
         {
+            if (gunshotClip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(gunshotClip);
+            }
+
             Vector3 baseDirection = playerCamera.transform.forward;
             Vector3 spreadOffset = new Vector3(
                 Random.Range(-data.spreadAmount, data.spreadAmount),
@@ -196,6 +206,11 @@
             if (weaponAnimRoutine != null) StopCoroutine(weaponAnimRoutine);
             weaponAnimRoutine = StartCoroutine(PlayWeaponDownUpAnimation(reloadTime));
 
+            if (reloadClip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(reloadClip);
+            }
+
             yield return new WaitForSeconds(reloadTime);
 
             weaponStates[currentSlot].currentAmmo = weaponStates[currentSlot].data.maxAmmo +
@@ -203,6 +218,7 @@
 
             isReloading = false;
         }
+
 
 
 

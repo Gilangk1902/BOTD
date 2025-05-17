@@ -73,7 +73,7 @@ public class Door : MonoBehaviour
 
         PromtController();
 
-        if (!isLocked && CanInteract() && Input.GetKeyDown(interactKey))
+        if (!isLocked && CanInteract() && Input.GetKey(InputManager.Instance.keyBindings.interact))
         {
             StartCoroutine(ToggleDoor());
         }

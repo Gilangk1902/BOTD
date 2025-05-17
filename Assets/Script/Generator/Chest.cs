@@ -58,7 +58,7 @@ public class Chest : MonoBehaviour
         {
             if (hit.transform == transform)
             {
-                if (Input.GetKeyDown(interactKey))
+                if (Input.GetKey(InputManager.Instance.keyBindings.interact))
                 {
                     OpenChest();
                 }

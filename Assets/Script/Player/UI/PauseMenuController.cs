@@ -48,4 +48,10 @@ public class PauseMenuController : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }
+
+    public void Retry()
+    {
+        Time.timeScale = 1f; // resume time
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 }

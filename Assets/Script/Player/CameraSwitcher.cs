@@ -39,6 +39,8 @@ public class CameraSwitcher : MonoBehaviour
 
     void Update()
     {
+
+
         if (Input.GetKeyDown(KeyCode.Tab) && freeCamera != null)
         {
             isFreeCameraActive = !isFreeCameraActive;

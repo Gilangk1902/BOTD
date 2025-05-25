@@ -28,6 +28,8 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     [Header("Audio")]
     public AudioClip hitClip;
     public AudioSource audioSource;
+    [Header("Vision Settings")]
+    public LayerMask visionMask;
 
     protected virtual void Start()
     {
@@ -42,7 +44,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         agent.speed = chaseSpeed;
     }
 
-    protected bool isAttacking = false; // NEW
+    protected bool isAttacking = false;
 
     protected virtual void Update()
     {
@@ -60,7 +62,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
                     SetAgentActive(true);
                 }
 
-                // Aktifkan animasi jalan hanya saat agent punya velocity
                 if (!agent.pathPending && agent.remainingDistance > stopDistance && !isAttacking)
                 {
                     SetAnimationState(walk: true, attack: false, idle: false);
@@ -77,9 +78,17 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             {
                 agent.ResetPath();
                 OnAttackDistance();
-                if (!isAttacking) // only attack if not currently attacking
+                if (CanSeePlayer())
                 {
-                    StartCoroutine(HandleAttack());
+                    if (!isAttacking)
+                        StartCoroutine(HandleAttack());
+                }
+                else
+                {
+                    // Jika tidak bisa lihat, coba dekati player
+                    agent.SetDestination(player.position);
+                    SetAgentActive(true);
+                    SetAnimationState(walk: true, attack: false, idle: false);
                 }
             }
         }
@@ -99,7 +108,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
         isAttacking = false;
 
-        // Reset NavMeshAgent
         agent.enabled = false;
 
         if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
@@ -114,7 +122,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             agent.enabled = false;
 
         }
-        // Reset animator
         if (animator != null)
         {
             animator.Rebind();
@@ -128,14 +135,14 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
         if (animator != null)
         {
-            animator.SetTrigger(TriggerAttack); // pakai trigger, bukan bool
+            animator.SetTrigger(TriggerAttack);
         }
 
         yield return new WaitForSeconds(GetAttackDelay());
 
-        Attack(); // logic hit / projectile
+        Attack();
 
-        yield return new WaitForSeconds(GetAttackCoolDown()); // tunggu animasi selesai
+        yield return new WaitForSeconds(GetAttackCoolDown());
 
         isAttacking = false;
     }
@@ -145,7 +152,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         if (animator == null) return;
         animator.SetBool(AnimWalk, walk);
-        //animator.SetBool(AnimAttack, attack);
         animator.SetBool(AnimIdle, idle);
     }
 
@@ -176,11 +182,33 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     }
 
     protected void SetAgentActive(bool active)
-{
-    agent.updatePosition = active;
-    agent.updateRotation = active;
-    agent.isStopped = !active;
-}
+    {
+        agent.updatePosition = active;
+        agent.updateRotation = active;
+        agent.isStopped = !active;
+    }
+
+    protected virtual bool CanSeePlayer()
+    {
+        if (player == null) return false;
+
+        Vector3 origin = transform.position + Vector3.up * 2f; // tinggi mata musuh
+        Vector3 target = player.position + Vector3.up * 1.5f;    // tinggi kepala player
+        Vector3 direction = (target - origin).normalized;
+        float distance = Vector3.Distance(origin, target);
+        float sphereRadius = 1f; // bisa disesuaikan
+
+        if (Physics.SphereCast(origin, sphereRadius, direction, out RaycastHit hit, distance, visionMask))
+        {
+            Debug.Log("sphercast hit : " + hit.collider.name);
+            return hit.collider.CompareTag("Player");
+        }
+
+
+        return false;
+    }
+
+
 
     protected abstract float GetAttackDelay();
     protected abstract float GetAttackCoolDown();

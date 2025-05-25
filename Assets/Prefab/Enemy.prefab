@@ -127,10 +127,13 @@ MonoBehaviour:
   chaseSpeed: 4
   hitClip: {fileID: 8300000, guid: e915d36f49275da4ab2f0188e2818e3e, type: 3}
   audioSource: {fileID: 4090413237977481660}
+  visionMask:
+    serializedVersion: 2
+    m_Bits: 1032
   attackPoint: {fileID: 1442394378722077171}
   attackCooldown: 1
   attackDelay: 0.8
-  attackDamage: 10
+  attackDamage: 30
   attackRange: 1.5
 --- !u!1 &7959293959812125767
 GameObject:

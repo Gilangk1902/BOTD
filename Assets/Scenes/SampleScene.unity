@@ -334,8 +334,8 @@ MonoBehaviour:
   useBoxColliders: 0
   reloadKey: 8
   toggleMapKey: 109
-  constructionDelay: 0
-  numberOfRooms: 30
+  constructionDelay: 0.006
+  numberOfRooms: 25
   generatedTiles: []
   navMeshSurface: {fileID: 921402435}
   dungeonGeneratorState: 0

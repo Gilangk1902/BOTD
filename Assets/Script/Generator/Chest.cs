@@ -3,18 +3,18 @@ using UnityEngine;
 public class Chest : MonoBehaviour
 {
     [Header("Chest Components")]
-    public Transform lid; // Assign the chest lid Transform in the Inspector
-    public float openAngle = 90f; // Angle to open the lid
-    public float openSpeed = 2f; // Speed of opening
+    public Transform lid;
+    public float openAngle = 90f;
+    public float openSpeed = 2f;
 
     [Header("Items to Spawn")]
-    public ItemData[] itemDatas; // Replace itemPrefabs with this
+    public ItemData[] itemDatas;
 
-    public Transform spawnPoint; // Assign the spawn point Transform
+    public Transform spawnPoint;
 
     [Header("Interaction Settings")]
-    public float interactDistance = 3f; // Maximum distance to interact
-    public KeyCode interactKey = KeyCode.E; // Key to press for interaction
+    public float interactDistance = 3f;
+    public KeyCode interactKey = KeyCode.E;
 
     private bool isOpened = false;
     private Quaternion closedRotation;
@@ -34,7 +34,6 @@ public class Chest : MonoBehaviour
         closedRotation = lid.localRotation;
         openedRotation = Quaternion.Euler(openAngle, 0f, 0f) * closedRotation;
 
-        // Find the player's camera
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -58,7 +57,7 @@ public class Chest : MonoBehaviour
         {
             if (hit.transform == transform)
             {
-                if (Input.GetKey(InputManager.Instance.keyBindings.interact))
+                if (Input.GetKeyDown(InputManager.Instance.keyBindings.interact))
                 {
                     OpenChest();
                 }
@@ -131,7 +130,7 @@ public class Chest : MonoBehaviour
             }
         }
 
-        return itemDatas[0].prefab; // fallback
+        return itemDatas[0].prefab;
     }
 
 }

@@ -123,16 +123,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 50
   chaseRange: 60
-  stopDistance: 15
+  stopDistance: 30
   chaseSpeed: 4.5
   hitClip: {fileID: 0}
   audioSource: {fileID: 3183498793721251579}
+  visionMask:
+    serializedVersion: 2
+    m_Bits: 1032
   projectilePrefab: {fileID: 5829162908752691098, guid: b5dfa50e431fd374b80496f5cb5a83c3, type: 3}
   shootPoint: {fileID: 1442394378722077171}
   attackCooldown: 0.8
   attackDelay: 0.2
   rangedRange: 30
-  projectileDamage: 20
+  projectileDamage: 15
   shootClip: {fileID: 8300000, guid: c49d71c76c98613469bc1b385b008738, type: 3}
   audioSource: {fileID: 3183498793721251579}
 --- !u!1 &7959293959812125767

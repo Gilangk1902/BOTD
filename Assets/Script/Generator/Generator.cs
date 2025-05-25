@@ -52,37 +52,6 @@ public class Generator : MonoBehaviour
         StartCoroutine(DungeonBuild());
     }
 
-    void Update()
-    {
-        //if(Input.GetKeyDown(reloadKey))
-        //{
-        //    SceneManager.LoadScene("SampleScene");
-        //}
-    }
-
-    //public void GenerateDungeon()
-    //{
-    //    if (transform.childCount > 0)
-    //    {
-    //        generatedTiles.Clear();
-    //        availableConnectors.Clear();
-    //        attempts = 0;
-    //        tileFrom = null;
-    //        tileTo = null;
-    //        tileRoot = null;
-    //        foreach (Transform child in transform)
-    //        {
-    //            Destroy(child.gameObject);
-    //        }
-
-    //        StartCoroutine(DungeonBuild());
-    //    }
-    //    else
-    //    {
-    //        StartCoroutine(DungeonBuild());
-    //    }
-    //}
-
     IEnumerator DungeonBuild()
     {
         dungeonGeneratorState = DungeonGeneratorState.Generating;
@@ -94,7 +63,7 @@ public class Generator : MonoBehaviour
 
         int numberOfRoomsOnMain = Mathf.CeilToInt((float) numberOfRooms * 0.6f);
 
-        while(generatedTiles.Count(x => x.tile.name.Contains("Room")) < numberOfRoomsOnMain + 1)
+        while(generatedTiles.Count(x => x.tile.name.Contains("Room")) <= numberOfRoomsOnMain)
         {
             yield return new WaitForSeconds(constructionDelay);
             tileFrom = tileTo;
@@ -104,8 +73,6 @@ public class Generator : MonoBehaviour
                 tileTo = CreateExitTile();
                 ConnectTiles();
                 CollisionCheck();
-
-                Debug.Log("AKH");
             }
             else if (tileFrom.name.Contains("Room"))
             {

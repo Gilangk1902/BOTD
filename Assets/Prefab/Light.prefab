@@ -73,7 +73,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6854975149624161865}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
@@ -211,6 +211,10 @@ PrefabInstance:
     - target: {fileID: 4769602642509491576, guid: 17fe3e2a1fb696340ad90f97d6034bcd, type: 3}
       propertyPath: m_Name
       value: Fire
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769602642509491576, guid: 17fe3e2a1fb696340ad90f97d6034bcd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

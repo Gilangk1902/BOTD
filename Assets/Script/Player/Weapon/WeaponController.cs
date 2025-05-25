@@ -65,12 +65,12 @@
                 return;
             if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(0);
             if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(1);
-            if (Input.GetKey(InputManager.Instance.keyBindings.interact))
+            if (Input.GetKeyDown(InputManager.Instance.keyBindings.interact))
             {
                 TryPickupWeapon();
             }
             if (Input.GetKey(InputManager.Instance.keyBindings.shoot)) TryFire();
-        if (Input.GetKey(InputManager.Instance.keyBindings.reload)) TryReload();
+        if (Input.GetKeyDown(InputManager.Instance.keyBindings.reload)) TryReload();
 
         }
 
@@ -149,7 +149,6 @@
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f, shootableLayers))
             {
                 Debug.DrawRay(ray.origin, finalDirection * hit.distance, Color.red, .1f);
-                Debug.Log("Hit: " + hit.collider.name);
 
                 IDamageable target = hit.collider.GetComponent<IDamageable>();
                 if (target != null)

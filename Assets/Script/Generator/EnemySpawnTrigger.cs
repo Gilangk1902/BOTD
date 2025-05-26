@@ -28,7 +28,6 @@ public class EnemySpawnTrigger : MonoBehaviour
 
         if (roomRoot != null && roomRoot.name.Contains("Start"))
         {
-            Debug.Log("Start room detected, enemy will not spawn.");
             return;
         }
 

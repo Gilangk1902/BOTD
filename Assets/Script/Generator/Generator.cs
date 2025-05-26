@@ -333,7 +333,6 @@ public class Generator : MonoBehaviour
         Transform origin = generatedTiles[generatedTiles.FindIndex(x => x.tile == tileFrom)].tile;
         generatedTiles.Add(new Tile(goTile.transform, origin));
 
-        Debug.Log("create exit");
         return goTile.transform;
     }
 
@@ -449,7 +448,6 @@ public class Generator : MonoBehaviour
 
                 if (spawnPoints.Length == 0)
                 {
-                    Debug.LogWarning("No chest spawn points in: " + tile.tile.name);
                     continue;
                 }
 
@@ -525,7 +523,6 @@ public class Generator : MonoBehaviour
     {
         if (characterPrefab == null)
         {
-            Debug.LogWarning("characterPrefab belum diset!");
             return;
         }
 

@@ -51,7 +51,6 @@ public class RoomEncounter : MonoBehaviour
             }
         }
 
-        Debug.Log($"chest found: {chestsInRoom.Count}");
 
     }
 

@@ -118,7 +118,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         }
         else
         {
-            Debug.LogWarning($"{gameObject.name} not on NavMesh — disabling NavMeshAgent");
             agent.enabled = false;
 
         }
@@ -192,21 +191,27 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         if (player == null) return false;
 
-        Vector3 origin = transform.position + Vector3.up * 2f; // tinggi mata musuh
-        Vector3 target = player.position + Vector3.up * 1.5f;    // tinggi kepala player
+        Vector3 origin = transform.position + Vector3.up * 1.5f;
+        Vector3 target = player.position + Vector3.up * 0.5f;
         Vector3 direction = (target - origin).normalized;
         float distance = Vector3.Distance(origin, target);
-        float sphereRadius = 1f; // bisa disesuaikan
+        float sphereRadius = 1f;
 
-        if (Physics.SphereCast(origin, sphereRadius, direction, out RaycastHit hit, distance, visionMask))
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, visionMask))
         {
-            Debug.Log("sphercast hit : " + hit.collider.name);
+            Debug.DrawLine(origin, hit.point, Color.red, 1f);
             return hit.collider.CompareTag("Player");
         }
 
+        if (Physics.SphereCast(origin, sphereRadius, direction, out RaycastHit sphereHit, distance, visionMask))
+        {
+            Debug.DrawRay(origin, direction * distance, Color.yellow, 1f);
+            return sphereHit.collider.CompareTag("Player");
+        }
 
         return false;
     }
+
 
 
 

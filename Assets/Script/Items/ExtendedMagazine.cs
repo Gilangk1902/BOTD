@@ -12,6 +12,7 @@ public class ExtendedMagazine : BuffItem
         if (stats != null)
         {
             stats.setAdditionalClipSize(stats.getAdditionalClipSize() + clipSizeMultiplier);
+            DifficultyManager.Instance.playerPowerLevel++;
         }
     }
 }

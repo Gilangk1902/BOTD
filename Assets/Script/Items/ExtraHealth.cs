@@ -12,6 +12,7 @@ public class ExtraHealth : BuffItem
         {
             stats.setMaxHealth(stats.getMaxHealth() + extraHealth);
             stats.setCurrentHealth(stats.getCurrentHealth() + extraHealth);
+            DifficultyManager.Instance.playerPowerLevel++;
         }
     }
 }

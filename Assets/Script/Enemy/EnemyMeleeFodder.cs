@@ -15,7 +15,7 @@ public class EnemyMeleeFodder : Enemy
 
     protected override void Start()
     {
-        base.Start(); // penting agar animator, player, agent di-setup
+        base.Start();
     }
 
     public override void Attack()
@@ -24,10 +24,9 @@ public class EnemyMeleeFodder : Enemy
         if (attackPoint == null) return;
 
         lastAttackTime = Time.time;
-
-        // This attack logic can be triggered via animation event as well
         PerformMeleeHit();
     }
+
 
     private void PerformMeleeHit()
     {
@@ -46,7 +45,7 @@ public class EnemyMeleeFodder : Enemy
 
     protected override float GetAttackCoolDown()
     {
-        return attackCooldown; // atau return 1.2f jika beda dari cooldown logic
+        return attackCooldown;
     }
 
     protected override float GetAttackDelay()
@@ -59,7 +58,7 @@ public class EnemyMeleeFodder : Enemy
         if (player == null) return;
 
         Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0f; // biar nggak mendongak ke atas/bawah
+        direction.y = 0f;
 
         if (direction != Vector3.zero)
         {

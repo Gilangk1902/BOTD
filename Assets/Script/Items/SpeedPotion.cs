@@ -11,6 +11,7 @@ public class SpeedPotion : BuffItem
         if (stats != null)
         {
             stats.setMoveSpeed(stats.getMoveSpeed() + stats.getMoveSpeed()*speedMultiplier);
+            DifficultyManager.Instance.playerPowerLevel++;
         }
     }
 }

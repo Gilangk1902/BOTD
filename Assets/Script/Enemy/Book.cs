@@ -4,9 +4,16 @@ public class TargetBook : MonoBehaviour, IDamageable
 {
     public int health = 10;
     private GameObject victoryPanel;
+    public float rotationSpeed = 30f;      // derajat per detik
+    public float floatAmplitude = 0.25f;   // seberapa tinggi naik turun
+    public float floatFrequency = 1f;      // seberapa cepat naik turun
+
+    private Vector3 startPosition;
 
     void Start()
     {
+        startPosition = transform.position;
+
         // Find the player in the scene
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
@@ -27,6 +34,17 @@ public class TargetBook : MonoBehaviour, IDamageable
         }
     }
 
+    void Update()
+    {
+        // Rotasi Y
+        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
+
+        // Gerakan naik-turun (sinusoidal)
+        float yOffset = Mathf.Sin(Time.time * floatFrequency) * floatAmplitude;
+        transform.position = new Vector3(startPosition.x, startPosition.y + yOffset, startPosition.z);
+    }
+
+
     public void TakeDamage(int damage)
     {
         health -= damage;
@@ -44,6 +62,18 @@ public class TargetBook : MonoBehaviour, IDamageable
         if (victoryPanel != null)
         {
             victoryPanel.SetActive(true);
+
+            GameTimer.Instance.StopTimer();
+
+            var texts = victoryPanel.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true);
+            foreach (var text in texts)
+            {
+                if (text.name == "Score")
+                {
+                    text.text = "Victory Time: " + GameTimer.Instance.GetFormattedTime();
+                    break;
+                }
+            }
         }
 
         Cursor.lockState = CursorLockMode.None;

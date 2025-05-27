@@ -44,7 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61a03d74441dfaa4eace97ec156e123e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefabs:
-  - {fileID: 6619884417742332680, guid: f937c7e67af09a94a8ae37602dc90f7f, type: 3}
-  - {fileID: 6619884417742332680, guid: 22f631d38dc41d74fab74fb2d5d94c42, type: 3}
+  enemyPoolTags: []
   hasSpawned: 0
+  navmeshSearchRadius: 2

@@ -25,6 +25,11 @@
         private Vector3 defaultWeaponPos;
         private Coroutine weaponAnimRoutine;
 
+        [Header("Audio")]
+        public AudioSource audioSource;
+        public AudioClip gunshotClip;
+        public AudioClip reloadClip;
+
 
         private void Start()
         {
@@ -60,20 +65,12 @@
                 return;
             if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(0);
             if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(1);
-            //if (Input.GetKeyDown(KeyCode.G)) DropCurrentWeapon();
-
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(InputManager.Instance.keyBindings.interact))
             {
                 TryPickupWeapon();
             }
-            if (Input.GetMouseButton(0)) TryFire();
-            if (Input.GetKeyDown(KeyCode.R)) TryReload();
-            if (Input.GetMouseButtonDown(1))
-            {
-                TryMeleeAttack();
-            }
-
-
+            if (Input.GetKey(InputManager.Instance.keyBindings.shoot)) TryFire();
+        if (Input.GetKeyDown(InputManager.Instance.keyBindings.reload)) TryReload();
 
         }
 
@@ -110,13 +107,13 @@
 
             WeaponRuntime current = weaponStates[currentSlot];
             WeaponData data = current.data;
-
-            if (Time.time - current.lastFireTime < data.fireRate) return;
+               
+            if (Time.time - current.lastFireTime < data.fireRate - (data.fireRate*playerStat.getAdditionalFireRate())) return;
             if (current.currentAmmo <= 0)
             {
                 return;
             }
-
+        Debug.Log(data.fireRate - (data.fireRate * playerStat.getAdditionalFireRate()));
             current.lastFireTime = Time.time;
             current.currentAmmo--;
 
@@ -135,6 +132,11 @@
 
         void shoot(WeaponData data)
         {
+            if (gunshotClip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(gunshotClip);
+            }
+
             Vector3 baseDirection = playerCamera.transform.forward;
             Vector3 spreadOffset = new Vector3(
                 Random.Range(-data.spreadAmount, data.spreadAmount),
@@ -147,7 +149,6 @@
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f, shootableLayers))
             {
                 Debug.DrawRay(ray.origin, finalDirection * hit.distance, Color.red, .1f);
-                Debug.Log("Hit: " + hit.collider.name);
 
                 IDamageable target = hit.collider.GetComponent<IDamageable>();
                 if (target != null)
@@ -196,6 +197,11 @@
             if (weaponAnimRoutine != null) StopCoroutine(weaponAnimRoutine);
             weaponAnimRoutine = StartCoroutine(PlayWeaponDownUpAnimation(reloadTime));
 
+            if (reloadClip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(reloadClip);
+            }
+
             yield return new WaitForSeconds(reloadTime);
 
             weaponStates[currentSlot].currentAmmo = weaponStates[currentSlot].data.maxAmmo +
@@ -203,6 +209,7 @@
 
             isReloading = false;
         }
+
 
 
 
@@ -225,17 +232,20 @@
                         }
                     }
 
-                    if (emptySlot != -1)
-                    {
-                        weaponSlots[emptySlot] = pickup.weaponData;
-                        weaponObjects[emptySlot] = Instantiate(pickup.weaponData.weaponModelPrefab, weaponHolder);
-                        SetWeaponPhysics(weaponObjects[emptySlot], false);
-                        weaponStates[emptySlot] = new WeaponRuntime(pickup.weaponData, playerStat);
-                        weaponObjects[emptySlot].SetActive(false);
-                        Destroy(pickup.gameObject);
-                    }
-                    else
-                    {
+                if (emptySlot != -1)
+                {
+                    weaponSlots[emptySlot] = pickup.weaponData;
+                    weaponObjects[emptySlot] = Instantiate(pickup.weaponData.weaponModelPrefab, weaponHolder);
+                    SetWeaponPhysics(weaponObjects[emptySlot], false);
+                    weaponStates[emptySlot] = new WeaponRuntime(pickup.weaponData, playerStat);
+                    Destroy(pickup.gameObject);
+
+                    currentSlot = emptySlot;
+                    SwitchWeapon(currentSlot);
+                }
+
+                else
+                {
                         DropCurrentWeapon();
 
                         weaponSlots[currentSlot] = pickup.weaponData;
@@ -244,8 +254,9 @@
                         weaponStates[currentSlot] = new WeaponRuntime(pickup.weaponData, playerStat);
                         Destroy(pickup.gameObject);
 
-                        weaponObjects[currentSlot].SetActive(true);
+                        SwitchWeapon(currentSlot);
                     }
+
 
 
                 }

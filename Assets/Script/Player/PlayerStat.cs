@@ -9,8 +9,13 @@ public class PlayerStat : MonoBehaviour, IDamageable
     private int currentHealth;
     [SerializeField] private float additionalClipSize;
     [SerializeField] private int extraBulletPerShot = 0;
+    [SerializeField] private float additionalFireRate = 0f;
     [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private MonoBehaviour[] componentsToDisable; 
+    [SerializeField] private MonoBehaviour[] componentsToDisable;
+
+    [Header("Audio")]
+    public AudioClip hitClip;
+    public AudioSource audioSource;
 
     void Start()
     {
@@ -21,6 +26,11 @@ public class PlayerStat : MonoBehaviour, IDamageable
     {
         currentHealth -= amount;
         Debug.Log($"Player took {amount} damage. Remaining health: {currentHealth}");
+
+        if (hitClip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(hitClip);
+        }
 
         if (currentHealth <= 0)
         {
@@ -98,5 +108,15 @@ public class PlayerStat : MonoBehaviour, IDamageable
     public void setCurrentHealth(int amount)
     {
         this.currentHealth = amount;
+    }
+
+    public float getAdditionalFireRate()
+    {
+        return this.additionalFireRate;
+    }
+
+    public void setAdditionalFireRate(float amount)
+    {
+        this.additionalFireRate = amount;
     }
 }

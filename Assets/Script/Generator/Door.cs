@@ -73,7 +73,7 @@ public class Door : MonoBehaviour
 
         PromtController();
 
-        if (!isLocked && CanInteract() && Input.GetKeyDown(interactKey))
+        if (!isLocked && CanInteract() && Input.GetKey(InputManager.Instance.keyBindings.interact))
         {
             StartCoroutine(ToggleDoor());
         }
@@ -85,14 +85,14 @@ public class Door : MonoBehaviour
         RaycastHit hit;
         Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
 
-        if (!isLocked && Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
-        {
-            ShowPrompt(true);
-        }
-        else
-        {
-            ShowPrompt(false);
-        }
+        //if (!isLocked && Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
+        //{
+        //    ShowPrompt(true);
+        //}
+        //else
+        //{
+        //    ShowPrompt(false);
+        //}
     }
 
     bool CanInteract()

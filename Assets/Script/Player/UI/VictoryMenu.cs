@@ -8,7 +8,7 @@ public class VictoryMenu : MonoBehaviour
     public void Retry()
     {
         Time.timeScale = 1f; // resume time
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene("Loading");
     }
 
     public void MainMenu()

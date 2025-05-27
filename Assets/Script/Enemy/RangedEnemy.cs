@@ -14,21 +14,15 @@ public class RangedEnemy : Enemy
 
     private float lastAttackTime = -999f;
 
+    [Header("Audio")]
+    public AudioClip shootClip;
+    public AudioSource audioSource;
+
     protected override void Start()
     {
-        base.Start(); // penting agar animator, player, agent di-setup
+        base.Start();
     }
 
-    protected override void OnChasing(float distance)
-    {
-        // Jika dalam jangkauan serangan jarak jauh, berhenti dan menyerang
-        if (distance <= rangedRange)
-        {
-            agent.ResetPath();
-            SetAnimationState(walk: false, attack: true, idle: false);
-            Attack();
-        }
-    }
 
     public override void Attack()
     {
@@ -48,13 +42,16 @@ public class RangedEnemy : Enemy
             p.damage = projectileDamage;
         }
 
-        Debug.Log($"{gameObject.name} fired projectile at player.");
-    }
+        if (shootClip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(shootClip);
+        }
 
+    }
 
     protected override float GetAttackCoolDown()
     {
-        return attackCooldown; // atau return 1.2f jika beda dari cooldown logic
+        return attackCooldown; 
     }
 
     protected override float GetAttackDelay()
@@ -67,7 +64,7 @@ public class RangedEnemy : Enemy
         if (player == null) return;
 
         Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0f; // biar nggak mendongak ke atas/bawah
+        direction.y = 0f;
 
         if (direction != Vector3.zero)
         {

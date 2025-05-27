@@ -199,7 +199,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -207,12 +207,12 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -221,7 +221,7 @@ Light:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 1
+    m_Strength: 0.075
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
@@ -334,8 +334,8 @@ MonoBehaviour:
   useBoxColliders: 0
   reloadKey: 8
   toggleMapKey: 109
-  constructionDelay: 0
-  numberOfRooms: 30
+  constructionDelay: 0.006
+  numberOfRooms: 25
   generatedTiles: []
   navMeshSurface: {fileID: 921402435}
   dungeonGeneratorState: 0
@@ -462,6 +462,8 @@ GameObject:
   - component: {fileID: 1894844320}
   - component: {fileID: 1894844319}
   - component: {fileID: 1894844321}
+  - component: {fileID: 1894844322}
+  - component: {fileID: 1894844323}
   m_Layer: 0
   m_Name: Pool
   m_TagString: Untagged
@@ -517,6 +519,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trailPrefab: {fileID: 6798891704280135985, guid: 5972e9b6dd1591e42bcc6076a26db344, type: 3}
   poolSize: 100
+--- !u!114 &1894844322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894844318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a414cfdd09a39045903d83c4ed3c8cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 5829162908752691098, guid: b5dfa50e431fd374b80496f5cb5a83c3, type: 3}
+  poolSize: 20
+--- !u!114 &1894844323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894844318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f83749c31878074484cb832e5691635, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPowerLevel: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -66,7 +66,8 @@ public class Generator : MonoBehaviour
         while(generatedTiles.Count(x => x.tile.name.Contains("Room")) <= numberOfRoomsOnMain)
         {
             yield return new WaitForSeconds(constructionDelay);
-            tileFrom = tileTo;
+            tileFrom = tileTo != null ? tileTo : tileFrom;
+
 
             if (generatedTiles.Count(x => x.tile.name.Contains("Room")) == numberOfRoomsOnMain)
             {
@@ -155,7 +156,8 @@ public class Generator : MonoBehaviour
             SpawnPlayer();
         }
     }
-
+    int maxRecursiveCalls = 10;
+    int recursiveCallCount = 0;
     void CollisionCheck()
     {
         BoxCollider box = tileTo.GetComponent<BoxCollider>();
@@ -182,9 +184,18 @@ public class Generator : MonoBehaviour
                 generatedTiles.RemoveAt(toIndex);
                 DestroyImmediate(tileTo.gameObject);
 
+                if (recursiveCallCount > maxRecursiveCalls)
+                {
+                    recursiveCallCount--;
+                    //atau mungkin assign tile from baru disini
+                    return;
+                }
+
+                recursiveCallCount++;
+
                 // backtracking
 
-                if(attempts > 50)
+                if (attempts > 50)
                 {
                     int fromIndex = generatedTiles.FindIndex(x => x.tile == tileFrom);
                     Tile myTileFrom = generatedTiles[fromIndex];
@@ -260,6 +271,7 @@ public class Generator : MonoBehaviour
             }
             else { attempts = 0; }
         }
+        recursiveCallCount--;
     }
 
 

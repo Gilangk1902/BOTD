@@ -147,6 +147,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a20f03c426822fe40b4a2b5adbdcca97, type: 2}
   - {fileID: 11400000, guid: 6910a92f72834e646bcccc4654069fbe, type: 2}
   - {fileID: 11400000, guid: 552ce2f30aae9c245ad2886fe5868716, type: 2}
+  - {fileID: 11400000, guid: e6cd35d77c3369f4d813a32d2fb4877f, type: 2}
   spawnPoint: {fileID: 1466877571118512587}
   interactDistance: 3
   interactKey: 101

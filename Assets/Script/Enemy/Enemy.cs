@@ -27,9 +27,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     [Header("Audio")]
     public AudioClip hitClip;
-    public AudioSource audioSource;
+    public AudioSource hitAudioSource;
     [Header("Vision Settings")]
     public LayerMask visionMask;
+    private bool isDead = false;
 
     protected virtual void Start()
     {
@@ -107,6 +108,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
         currentHealth = maxHealth;
         isAttacking = false;
+        isDead = false;
 
         agent.enabled = false;
 
@@ -119,14 +121,15 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         else
         {
             agent.enabled = false;
-
         }
+
         if (animator != null)
         {
             animator.Rebind();
             animator.Update(0f);
         }
     }
+
 
     protected virtual IEnumerator HandleAttack()
     {
@@ -164,9 +167,9 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         currentHealth -= amount;
 
-        if (hitClip != null && audioSource != null)
+        if (hitClip != null && hitAudioSource != null)
         {
-            audioSource.PlayOneShot(hitClip);
+            hitAudioSource.PlayOneShot(hitClip);
         }
 
         if (currentHealth <= 0)
@@ -176,9 +179,36 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
         OnDeath?.Invoke(this);
-        gameObject.SetActive(false);
+
+        // Matikan AI dan Agent
+        SetAgentActive(false);
+        agent.enabled = false;
+        this.enabled = false;
+
+        // Set animasi mati
+        if (animator != null)
+        {
+            animator.SetBool(AnimWalk, false);
+            animator.SetBool(AnimIdle, false);
+            animator.SetTrigger("Die");
+        }
+
+        StartCoroutine(WaitAndDestroy());
     }
+
+    IEnumerator WaitAndDestroy()
+    {
+        // Asumsikan durasi animasi kematian 3 detik
+        yield return new WaitForSeconds(3f);
+
+        // Hapus objek
+        Destroy(gameObject);
+    }
+
 
     protected void SetAgentActive(bool active)
     {

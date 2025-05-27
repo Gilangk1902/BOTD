@@ -325,17 +325,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd33b69a951712d47874507e783353cb, type: 2}
   chestPrefab:
   - {fileID: 9181058223136392440, guid: 56cce78553c69d949acc5ae8ee636bbf, type: 3}
-  - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
-  - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
-  - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
-  - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
-  - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
   characterPrefab: {fileID: 2826078552957777887, guid: 16fa8b34c2dc08e4892d692b8b4a4006, type: 3}
   useBoxColliders: 0
   reloadKey: 8
   toggleMapKey: 109
   constructionDelay: 0.006
-  numberOfRooms: 25
+  numberOfRooms: 15
   generatedTiles: []
   navMeshSurface: {fileID: 921402435}
   dungeonGeneratorState: 0

@@ -240,8 +240,14 @@
                     weaponStates[emptySlot] = new WeaponRuntime(pickup.weaponData, playerStat);
                     Destroy(pickup.gameObject);
 
+                    if (weaponObjects[currentSlot] != null)
+                        weaponObjects[currentSlot].SetActive(false); 
+
                     currentSlot = emptySlot;
-                    SwitchWeapon(currentSlot);
+
+                    if (weaponObjects[currentSlot] != null)
+                        weaponObjects[currentSlot].SetActive(true); 
+
                 }
 
                 else

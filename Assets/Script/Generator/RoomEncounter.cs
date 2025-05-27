@@ -78,16 +78,34 @@ public class RoomEncounter : MonoBehaviour
             Enemy e = spawner.SpawnEnemy();
             if (e != null)
             {
+                ApplyDifficultyScaling(e);
                 aliveEnemies.Add(e);
                 e.OnDeath += CheckEnemiesRemaining;
             }
         }
+
 
         foreach (var chest in chestsInRoom)
         {
             chest.LockChest();
         }
 
+    }
+    void ApplyDifficultyScaling(Enemy enemy)
+    {
+        var scale = DifficultyManager.Instance;
+
+        enemy.maxHealth = Mathf.RoundToInt(enemy.maxHealth * scale.GetEnemyHealthMultiplier());
+        enemy.chaseSpeed *= scale.GetEnemySpeedMultiplier();    
+
+        //if (enemy is RangedEnemy ranged)
+        //{
+        //    ranged.projectileDamage = Mathf.RoundToInt(ranged.projectileDamage * scale.GetEnemyDamageMultiplier());
+        //}
+        //else
+        //{
+            
+        //}
     }
 
     private void CheckEnemiesRemaining(Enemy enemy)

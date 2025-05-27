@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
@@ -41,6 +42,8 @@ public class PauseMenuController : MonoBehaviour
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
+
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void LoadMainMenu()
@@ -52,6 +55,6 @@ public class PauseMenuController : MonoBehaviour
     public void Retry()
     {
         Time.timeScale = 1f; // resume time
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene("Loading");
     }
 }

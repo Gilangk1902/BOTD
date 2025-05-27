@@ -11,6 +11,10 @@ public class CharacterController : MonoBehaviour
 
     private Rigidbody rb;
     private float xRotation = 0f;
+    public float gravityMultiplier = 2f;
+    public float groundCheckDistance = 0.3f;
+    public LayerMask groundLayer;
+    private bool isGrounded;
 
     void Start()
     {
@@ -28,8 +32,25 @@ public class CharacterController : MonoBehaviour
 
     void FixedUpdate()
     {
+        CheckGrounded();
         Move();
+        ApplyExtraGravity();
     }
+    void ApplyExtraGravity()
+    {
+        if (!isGrounded)
+        {
+            // Tambahkan gravity tambahan agar karakter nempel saat di turunan
+            rb.AddForce(Vector3.down * gravityMultiplier * Physics.gravity.magnitude, ForceMode.Acceleration);
+        }
+    }
+
+    void CheckGrounded()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        isGrounded = Physics.Raycast(origin, Vector3.down, groundCheckDistance, groundLayer);
+    }
+
 
     void LookAround()
     {

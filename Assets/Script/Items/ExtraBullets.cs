@@ -11,6 +11,7 @@ public class ExtraBullets : BuffItem
         if (stats != null)
         {
             stats.setExtraBulletPerShot(stats.getExtraBulletPerShot() + extraBullets);
+            DifficultyManager.Instance.playerPowerLevel++;
         }
     }
 }

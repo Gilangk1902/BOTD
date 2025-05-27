@@ -107,13 +107,13 @@
 
             WeaponRuntime current = weaponStates[currentSlot];
             WeaponData data = current.data;
-
-            if (Time.time - current.lastFireTime < data.fireRate) return;
+               
+            if (Time.time - current.lastFireTime < data.fireRate - (data.fireRate*playerStat.getAdditionalFireRate())) return;
             if (current.currentAmmo <= 0)
             {
                 return;
             }
-
+        Debug.Log(data.fireRate - (data.fireRate * playerStat.getAdditionalFireRate()));
             current.lastFireTime = Time.time;
             current.currentAmmo--;
 
@@ -232,17 +232,20 @@
                         }
                     }
 
-                    if (emptySlot != -1)
-                    {
-                        weaponSlots[emptySlot] = pickup.weaponData;
-                        weaponObjects[emptySlot] = Instantiate(pickup.weaponData.weaponModelPrefab, weaponHolder);
-                        SetWeaponPhysics(weaponObjects[emptySlot], false);
-                        weaponStates[emptySlot] = new WeaponRuntime(pickup.weaponData, playerStat);
-                        weaponObjects[emptySlot].SetActive(false);
-                        Destroy(pickup.gameObject);
-                    }
-                    else
-                    {
+                if (emptySlot != -1)
+                {
+                    weaponSlots[emptySlot] = pickup.weaponData;
+                    weaponObjects[emptySlot] = Instantiate(pickup.weaponData.weaponModelPrefab, weaponHolder);
+                    SetWeaponPhysics(weaponObjects[emptySlot], false);
+                    weaponStates[emptySlot] = new WeaponRuntime(pickup.weaponData, playerStat);
+                    Destroy(pickup.gameObject);
+
+                    currentSlot = emptySlot;
+                    SwitchWeapon(currentSlot);
+                }
+
+                else
+                {
                         DropCurrentWeapon();
 
                         weaponSlots[currentSlot] = pickup.weaponData;
@@ -251,8 +254,9 @@
                         weaponStates[currentSlot] = new WeaponRuntime(pickup.weaponData, playerStat);
                         Destroy(pickup.gameObject);
 
-                        weaponObjects[currentSlot].SetActive(true);
+                        SwitchWeapon(currentSlot);
                     }
+
 
 
                 }

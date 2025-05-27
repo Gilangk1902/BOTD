@@ -9,6 +9,7 @@ public class PlayerStat : MonoBehaviour, IDamageable
     private int currentHealth;
     [SerializeField] private float additionalClipSize;
     [SerializeField] private int extraBulletPerShot = 0;
+    [SerializeField] private float additionalFireRate = 0f;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private MonoBehaviour[] componentsToDisable;
 
@@ -107,5 +108,15 @@ public class PlayerStat : MonoBehaviour, IDamageable
     public void setCurrentHealth(int amount)
     {
         this.currentHealth = amount;
+    }
+
+    public float getAdditionalFireRate()
+    {
+        return this.additionalFireRate;
+    }
+
+    public void setAdditionalFireRate(float amount)
+    {
+        this.additionalFireRate = amount;
     }
 }

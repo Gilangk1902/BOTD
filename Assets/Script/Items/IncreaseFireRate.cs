@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpeedPotion : BuffItem
+public class IncreaseFireRate : BuffItem
 {
     private float speedMultiplier = .1f;
     protected override void ApplyBuff(GameObject player)
@@ -10,7 +10,7 @@ public class SpeedPotion : BuffItem
         PlayerStat stats = player.GetComponent<PlayerStat>();
         if (stats != null)
         {
-            stats.setMoveSpeed(stats.getMoveSpeed() + stats.getMoveSpeed()*speedMultiplier);
+            stats.setAdditionalFireRate(stats.getAdditionalFireRate() + speedMultiplier);
             DifficultyManager.Instance.playerPowerLevel++;
         }
     }

@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: 
   weaponModelPrefab: {fileID: 1319476866288497500, guid: 92a7da116fafd1748b5ccd794374c0a3, type: 3}
   pickupPrefab: {fileID: 5883985479862294086, guid: 4d1921b5299e8cf4fa0cdac22711a0a8, type: 3}
-  damage: 15
+  damage: 25
   fireRate: 1
   maxAmmo: 2
   reloadTime: 1.5

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using UnityEditor.MemoryProfiler;
 using UnityEngine.AI;
 
 public class Generator : MonoBehaviour
@@ -120,7 +119,7 @@ public class Generator : MonoBehaviour
                 while (!roomGenerated)
                 {
                     yield return new WaitForSeconds(constructionDelay);
-                    tileFrom = tileTo;
+                    tileFrom = tileTo != null ? tileTo : tileFrom;
                     if (tileFrom.name.Contains("Room"))
                     {
                         tileTo = CreateHallwayTile();
@@ -481,6 +480,7 @@ public class Generator : MonoBehaviour
             if (tile.tile == null) continue;
 
             if (!tile.tile.name.Contains("Room")) continue;
+            if (tile.tile.name.Contains("Exit")) continue;
 
             Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
 

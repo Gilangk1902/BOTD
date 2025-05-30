@@ -1091,7 +1091,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStat: {fileID: 5518928057578232284}
-  mouseSensitivity: 2
+  mouseSensitivity: 140
   playerCamera: {fileID: 1208421004976659060}
   verticalLookLimit: 80
   gravityMultiplier: 1.5
@@ -1195,7 +1195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  moveSpeed: 10
+  moveSpeed: 600
   additionalClipSize: 0
   extraBulletPerShot: 0
   additionalFireRate: 0

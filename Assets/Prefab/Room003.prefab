@@ -1814,8 +1814,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectors:
   - {fileID: 2053249405191961462}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 257152136613193360}
   chestSpawnPoints:
   - {fileID: 870271461339190106}

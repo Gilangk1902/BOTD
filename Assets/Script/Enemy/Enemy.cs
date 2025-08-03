@@ -197,6 +197,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             animator.SetTrigger("Die");
         }
 
+        PlayerStat playerStat = player.GetComponent<PlayerStat>();
+        if (playerStat != null)
+        {
+            playerStat.Heal(5);
+        }
+
         StartCoroutine(WaitAndDestroy());
     }
 
@@ -229,13 +235,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, visionMask))
         {
-            Debug.DrawLine(origin, hit.point, Color.red, 1f);
+            //Debug.DrawLine(origin, hit.point, Color.red, 1f);
             return hit.collider.CompareTag("Player");
         }
 
         if (Physics.SphereCast(origin, sphereRadius, direction, out RaycastHit sphereHit, distance, visionMask))
         {
-            Debug.DrawRay(origin, direction * distance, Color.yellow, 1f);
+            //Debug.DrawRay(origin, direction * distance, Color.yellow, 1f);
             return sphereHit.collider.CompareTag("Player");
         }
 

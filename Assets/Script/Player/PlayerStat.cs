@@ -119,4 +119,8 @@ public class PlayerStat : MonoBehaviour, IDamageable
     {
         this.additionalFireRate = amount;
     }
+    public void Heal(int amount)
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+    }
 }

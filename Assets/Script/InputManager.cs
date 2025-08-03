@@ -5,17 +5,15 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance;
 
     public KeyBindings keyBindings = new KeyBindings();
+    public float mouseSensitivity = 120f;
 
     private void Awake()
     {
-        //PlayerPrefs.DeleteKey("KeyBindings");
-
-
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            LoadKeyBindings();
+            LoadSettings();
         }
         else
         {
@@ -26,24 +24,27 @@ public class InputManager : MonoBehaviour
     public void SaveKeyBindings()
     {
         PlayerPrefs.SetString("KeyBindings", JsonUtility.ToJson(keyBindings));
+        PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
     }
 
-    public void LoadKeyBindings()
+    public void LoadSettings()
     {
         if (PlayerPrefs.HasKey("KeyBindings"))
         {
             var loaded = JsonUtility.FromJson<KeyBindings>(PlayerPrefs.GetString("KeyBindings"));
 
-            // manual fallback kalau field tidak dimuat (safety)
+            // fallback default
             if (loaded.shoot == KeyCode.None) loaded.shoot = KeyCode.Mouse0;
             if (loaded.reload == KeyCode.None) loaded.reload = KeyCode.R;
             if (loaded.interact == KeyCode.None) loaded.interact = KeyCode.E;
 
             keyBindings = loaded;
         }
-    }
 
+        mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 120f);
+    }
 }
+
 
 [System.Serializable]
 public class KeyBindings

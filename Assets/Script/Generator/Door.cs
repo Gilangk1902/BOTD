@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, InteractPrompt
 {
     [Header("Door Settings")]
     public float openAngle = 90f;
@@ -22,8 +22,6 @@ public class Door : MonoBehaviour
 
     private Transform player;
     private Camera playerCamera;
-
-    private GameObject promptObject;
     private BoxCollider doorCollider;
 
     void Start()
@@ -48,17 +46,6 @@ public class Door : MonoBehaviour
         {
             player = playerObj.transform;
             playerCamera = player.GetComponentInChildren<Camera>();
-
-            Transform promptTransform = playerCamera.transform.Find("UI/Canvas/Prompt");
-            if (promptTransform != null)
-            {
-                promptObject = promptTransform.gameObject;
-                promptObject.SetActive(false);
-            }
-            else
-            {
-                Debug.LogWarning("Prompt object not found at path: UI/Canvas/Prompt");
-            }
         }
 
         if (playerCamera == null)
@@ -71,28 +58,10 @@ public class Door : MonoBehaviour
     {
         if (player == null || isMoving || playerCamera == null) return;
 
-        PromtController();
-
         if (!isLocked && CanInteract() && Input.GetKey(InputManager.Instance.keyBindings.interact))
         {
             StartCoroutine(ToggleDoor());
         }
-    }
-
-    void PromtController()
-    {
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        RaycastHit hit;
-        Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
-
-        //if (!isLocked && Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
-        //{
-        //    ShowPrompt(true);
-        //}
-        //else
-        //{
-        //    ShowPrompt(false);
-        //}
     }
 
     bool CanInteract()
@@ -106,14 +75,6 @@ public class Door : MonoBehaviour
             return hit.transform == transform || hit.transform.IsChildOf(transform);
         }
         return false;
-    }
-
-    void ShowPrompt(bool show)
-    {
-        if (promptObject != null)
-        {
-            promptObject.SetActive(show);
-        }
     }
 
     public IEnumerator ToggleDoor()
@@ -144,7 +105,6 @@ public class Door : MonoBehaviour
     public void Lock()
     {
         isLocked = true;
-        ShowPrompt(false);
     }
 
     public void Unlock()
@@ -181,9 +141,11 @@ public class Door : MonoBehaviour
         if (doorCollider != null)
             doorCollider.isTrigger = false;
 
-        isOpen = !isOpen;
-        // Don't change isOpen — we want to preserve original state
+        isOpen = !isOpen; // Optional: preserve original logic
     }
 
-
+    public string GetPromptText()
+    {
+        return "Open Door";
+    }
 }

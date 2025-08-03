@@ -14,6 +14,7 @@ public class Generator : MonoBehaviour
     public RoomScriptable[] _roomPrefabs;
     public GameObject[] chestPrefab;
     public GameObject characterPrefab;
+    public RoomScriptable[] startingRoom;
 
     [Header("Debugging Options")]
     public bool useBoxColliders;
@@ -373,10 +374,10 @@ public class Generator : MonoBehaviour
 
     Transform CreateStartTile()
     {
-        int index = GetWeightedRandomRoom();
+        int index = 0;
 
-        GameObject goTile = Instantiate(_roomPrefabs[index].prefab, Vector3.zero, Quaternion.identity, container);
-        goTile.name = _roomPrefabs[index].prefab.name + "_Start";
+        GameObject goTile = Instantiate(startingRoom[index].prefab, Vector3.zero, Quaternion.identity, container);
+        goTile.name = startingRoom[index].prefab.name + "_Start";
         float yRot = Random.Range(0, 4) * 90f;
         goTile.transform.Rotate(0, yRot, 0);
         generatedTiles.Add(new Tile(goTile.transform, null));
@@ -443,7 +444,6 @@ public class Generator : MonoBehaviour
 
                 if (spawnPoints.Length == 0)
                 {
-                    Debug.LogWarning("No chest spawn points in: " + tile.tile.name);
                     continue;
                 }
 

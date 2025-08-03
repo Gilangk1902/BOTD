@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class BuffItem : MonoBehaviour
+public abstract class BuffItem : MonoBehaviour, InteractPrompt
 {
     public float interactionDistance = 3f;
     public KeyCode interactKey = KeyCode.E;
@@ -29,4 +29,9 @@ public abstract class BuffItem : MonoBehaviour
     }
 
     protected abstract void ApplyBuff(GameObject player);
+
+    public string GetPromptText()
+    {
+        return "Pick Up Item";
+    }
 }

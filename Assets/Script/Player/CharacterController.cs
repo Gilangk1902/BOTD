@@ -21,6 +21,7 @@ public class CharacterController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
 
+        mouseSensitivity = InputManager.Instance.mouseSensitivity;
     }
 
     void Update()

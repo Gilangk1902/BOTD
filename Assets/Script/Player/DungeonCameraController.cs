@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class DungeonCameraController : MonoBehaviour
 {
-    public float moveSpeed = 20f;
-    public float rotationSpeed = 3f;
-    public float zoomSpeed = 20f;
+    public float moveSpeed = 400f;
+    public float rotationSpeed = 400f;
+    public float zoomSpeed = 400f;
     public float minZoom = 5f;
     public float maxZoom = 100f;
 
@@ -19,6 +19,7 @@ public class DungeonCameraController : MonoBehaviour
     {
         yaw = transform.eulerAngles.y;
         pitch = transform.eulerAngles.x;
+        rotationSpeed = InputManager.Instance.mouseSensitivity;
     }
 
     void Update()
@@ -72,17 +73,8 @@ public class DungeonCameraController : MonoBehaviour
 
     void HandleRotation()
     {
-        //if (Input.GetMouseButton(1)) // right click to rotate
-        //{
-        //    yaw += Input.GetAxis("Mouse X") * rotationSpeed;   // tambahkan ini untuk yaw
-        //    pitch -= Input.GetAxis("Mouse Y") * rotationSpeed; // sudah ada, tetap pakai
-
-        //    pitch = Mathf.Clamp(pitch, -80f, 80f); // batasi rotasi vertikal
-
-        //    transform.rotation = Quaternion.Euler(pitch, yaw, 0);
-        //}
-        yaw += Input.GetAxis("Mouse X") * rotationSpeed;   // tambahkan ini untuk yaw
-        pitch -= Input.GetAxis("Mouse Y") * rotationSpeed; // sudah ada, tetap pakai
+        yaw += Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;   // tambahkan ini untuk yaw
+        pitch -= Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime; // sudah ada, tetap pakai
 
         pitch = Mathf.Clamp(pitch, -80f, 80f); // batasi rotasi vertikal
 
@@ -93,7 +85,7 @@ public class DungeonCameraController : MonoBehaviour
     void HandleZoom()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        float newY = transform.position.y - scroll * zoomSpeed;
+        float newY = transform.position.y - scroll * zoomSpeed * Time.deltaTime;
 
         // Clamp agar tidak terlalu dekat atau terlalu jauh
         newY = Mathf.Clamp(newY, minZoom, maxZoom);

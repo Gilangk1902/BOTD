@@ -130,6 +130,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 166829262115754355, guid: 01dad4a8be48bc64db4f818eada080ca, type: 3}
+      propertyPath: moveSpeed
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 166829262115754355, guid: 01dad4a8be48bc64db4f818eada080ca, type: 3}
+      propertyPath: zoomSpeed
+      value: 12000
+      objectReference: {fileID: 0}
+    - target: {fileID: 166829262115754355, guid: 01dad4a8be48bc64db4f818eada080ca, type: 3}
+      propertyPath: rotationSpeed
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 436247891563691187, guid: 01dad4a8be48bc64db4f818eada080ca, type: 3}
+      propertyPath: field of view
+      value: 70
+      objectReference: {fileID: 0}
     - target: {fileID: 6056809998396393315, guid: 01dad4a8be48bc64db4f818eada080ca, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -323,6 +339,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 82c2d8ddb4bbfc54fba5eaf831a3065c, type: 2}
   - {fileID: 11400000, guid: 917261dfcb948174d99663efb3863d0b, type: 2}
   - {fileID: 11400000, guid: dd33b69a951712d47874507e783353cb, type: 2}
+  - {fileID: 11400000, guid: 3df6ad9bc64c7d549b320569219f2124, type: 2}
+  - {fileID: 11400000, guid: ab3ba41c1c0083445b0d9ba3d25795e9, type: 2}
   chestPrefab:
   - {fileID: 9181058223136392440, guid: 56cce78553c69d949acc5ae8ee636bbf, type: 3}
   - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
@@ -331,11 +349,14 @@ MonoBehaviour:
   - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
   - {fileID: 6513241336465285060, guid: 9c20e99f660ee2642a53c3cc4e16d1a4, type: 3}
   characterPrefab: {fileID: 2826078552957777887, guid: 16fa8b34c2dc08e4892d692b8b4a4006, type: 3}
+  startingRoom:
+  - {fileID: 11400000, guid: 917261dfcb948174d99663efb3863d0b, type: 2}
+  - {fileID: 11400000, guid: 7449c800bc0ed5b45b56ad62f8effd19, type: 2}
   useBoxColliders: 0
   reloadKey: 8
   toggleMapKey: 109
   constructionDelay: 0
-  numberOfRooms: 10
+  numberOfRooms: 5
   generatedTiles: []
   navMeshSurface: {fileID: 921402435}
   dungeonGeneratorState: 0

@@ -91,7 +91,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6619884417742332680}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 75
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -127,7 +127,7 @@ MonoBehaviour:
   stopDistance: 3
   chaseSpeed: 4
   hitClip: {fileID: 8300000, guid: e915d36f49275da4ab2f0188e2818e3e, type: 3}
-  audioSource: {fileID: 4090413237977481660}
+  hitAudioSource: {fileID: 0}
   visionMask:
     serializedVersion: 2
     m_Bits: 1032

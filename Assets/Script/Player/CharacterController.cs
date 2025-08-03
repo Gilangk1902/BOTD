@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterController : MonoBehaviour
 {
     [SerializeField] private PlayerStat playerStat;
-    public float mouseSensitivity = 2f;
+    public float mouseSensitivity = 20f;
     public Transform playerCamera;
     public float verticalLookLimit = 80f;
 
@@ -21,9 +21,10 @@ public class CharacterController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
 
+        mouseSensitivity = InputManager.Instance.mouseSensitivity;
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (Time.timeScale == 0f)
             return;
@@ -54,8 +55,8 @@ public class CharacterController : MonoBehaviour
 
     void LookAround()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -verticalLookLimit, verticalLookLimit);
@@ -76,7 +77,7 @@ public class CharacterController : MonoBehaviour
         float moveZ = Input.GetAxisRaw("Vertical");
 
         Vector3 inputDir = new Vector3(moveX, 0f, moveZ).normalized;
-        targetVelocity = transform.TransformDirection(inputDir) * playerStat.getMoveSpeed();
+        targetVelocity = transform.TransformDirection(inputDir) * playerStat.getMoveSpeed() * Time.deltaTime;
 
         // SmoothDamp untuk transisi kecepatan yang halus
         Vector3 velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref currentVelocity, inputDir.magnitude > 0 ? 1f / acceleration : 1f / deceleration);

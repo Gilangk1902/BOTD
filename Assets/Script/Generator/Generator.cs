@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using UnityEditor.MemoryProfiler;
 using UnityEngine.AI;
 
 public class Generator : MonoBehaviour
@@ -15,6 +14,7 @@ public class Generator : MonoBehaviour
     public RoomScriptable[] _roomPrefabs;
     public GameObject[] chestPrefab;
     public GameObject characterPrefab;
+    public RoomScriptable[] startingRoom;
 
     [Header("Debugging Options")]
     public bool useBoxColliders;
@@ -66,7 +66,8 @@ public class Generator : MonoBehaviour
         while(generatedTiles.Count(x => x.tile.name.Contains("Room")) <= numberOfRoomsOnMain)
         {
             yield return new WaitForSeconds(constructionDelay);
-            tileFrom = tileTo;
+            tileFrom = tileTo != null ? tileTo : tileFrom;
+
 
             if (generatedTiles.Count(x => x.tile.name.Contains("Room")) == numberOfRoomsOnMain)
             {
@@ -119,7 +120,7 @@ public class Generator : MonoBehaviour
                 while (!roomGenerated)
                 {
                     yield return new WaitForSeconds(constructionDelay);
-                    tileFrom = tileTo;
+                    tileFrom = tileTo != null ? tileTo : tileFrom;
                     if (tileFrom.name.Contains("Room"))
                     {
                         tileTo = CreateHallwayTile();
@@ -155,7 +156,8 @@ public class Generator : MonoBehaviour
             SpawnPlayer();
         }
     }
-
+    int maxRecursiveCalls = 10;
+    int recursiveCallCount = 0;
     void CollisionCheck()
     {
         BoxCollider box = tileTo.GetComponent<BoxCollider>();
@@ -182,9 +184,18 @@ public class Generator : MonoBehaviour
                 generatedTiles.RemoveAt(toIndex);
                 DestroyImmediate(tileTo.gameObject);
 
+                if (recursiveCallCount > maxRecursiveCalls)
+                {
+                    recursiveCallCount--;
+                    //atau mungkin assign tile from baru disini
+                    return;
+                }
+
+                recursiveCallCount++;
+
                 // backtracking
 
-                if(attempts > 50)
+                if (attempts > 50)
                 {
                     int fromIndex = generatedTiles.FindIndex(x => x.tile == tileFrom);
                     Tile myTileFrom = generatedTiles[fromIndex];
@@ -260,6 +271,7 @@ public class Generator : MonoBehaviour
             }
             else { attempts = 0; }
         }
+        recursiveCallCount--;
     }
 
 
@@ -362,10 +374,10 @@ public class Generator : MonoBehaviour
 
     Transform CreateStartTile()
     {
-        int index = GetWeightedRandomRoom();
+        int index = 0;
 
-        GameObject goTile = Instantiate(_roomPrefabs[index].prefab, Vector3.zero, Quaternion.identity, container);
-        goTile.name = _roomPrefabs[index].prefab.name + "_Start";
+        GameObject goTile = Instantiate(startingRoom[index].prefab, Vector3.zero, Quaternion.identity, container);
+        goTile.name = startingRoom[index].prefab.name + "_Start";
         float yRot = Random.Range(0, 4) * 90f;
         goTile.transform.Rotate(0, yRot, 0);
         generatedTiles.Add(new Tile(goTile.transform, null));
@@ -432,7 +444,6 @@ public class Generator : MonoBehaviour
 
                 if (spawnPoints.Length == 0)
                 {
-                    Debug.LogWarning("No chest spawn points in: " + tile.tile.name);
                     continue;
                 }
 
@@ -469,6 +480,7 @@ public class Generator : MonoBehaviour
             if (tile.tile == null) continue;
 
             if (!tile.tile.name.Contains("Room")) continue;
+            if (tile.tile.name.Contains("Exit")) continue;
 
             Connector[] connectors = tile.tile.GetComponentsInChildren<Connector>();
 

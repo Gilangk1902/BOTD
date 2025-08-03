@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+public class Chest : MonoBehaviour, InteractPrompt
 {
     [Header("Chest Components")]
     public Transform lid;
@@ -133,4 +133,8 @@ public class Chest : MonoBehaviour
         return itemDatas[0].prefab;
     }
 
+    public string GetPromptText()
+    {
+        return "Open Chest";
+    }
 }

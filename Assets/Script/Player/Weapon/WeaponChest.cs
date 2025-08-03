@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WeaponChest : MonoBehaviour
+public class WeaponChest : MonoBehaviour, InteractPrompt
 {
     [Header("Chest Components")]
     public Transform lid; // Assign the chest lid Transform in the Inspector
@@ -108,5 +108,8 @@ public class WeaponChest : MonoBehaviour
         lid.localRotation = endRotation;
     }
 
-
+    public string GetPromptText()
+    {
+        return "Open Chest";
+    }
 }
